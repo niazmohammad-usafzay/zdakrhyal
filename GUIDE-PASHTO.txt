@@ -1,0 +1,23 @@
+د «زدکړیال» V2 لارښود
+
+1) CMD د پروژې په فولډر کې خلاص کړه.
+2) npm install
+3) npm start
+4) Firefox کې http://localhost:3000 خلاص کړه.
+
+Admin:
+Email: admin@zdakrhyal.local
+Password: Admin123!
+
+V2 کې اضافه شوي:
+- د محصل او استاد جلا ثبت نام
+- Pending/Verified/Rejected
+- Admin dashboard او شمېرې
+- د استادانو Verify/Reject
+- د Faculty له مخې د کورس لټون
+- کتابتون
+- Admin له لارې کتاب اضافه کول
+- کورس کې درسونو شمېر، Video URL او Book URL ځای
+- د Faculty مطابق Download permission منطق
+
+مهم: دا لا MVP دی. ریښتینی OTP، ایمیل تایید، فایل/ویډیو Upload، ویډیو Streaming، Payment، Live Class، PostgreSQL او Production Security لا وروسته نښلول کېږي.
