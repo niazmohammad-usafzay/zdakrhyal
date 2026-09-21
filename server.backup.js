@@ -4,7 +4,6 @@ const path=require('path');
 const crypto=require('crypto');
 const https=require('https');
 const multer=require('multer');
-const pdfParse=require('pdf-parse');
 async function dbHealth(){return {configured:false,connected:false,mode:'JSON'};}
 
 const app=express();
@@ -36,7 +35,6 @@ function sendSMS(to,message){const url=process.env.SMS_API_URL;if(!url){console.
 const seed={
  auditLogs:[],wishlists:[],certificates:[],settings:{platformName:'زدکړیال',defaultLanguage:'ps',maintenance:false},users:[{id:'superadmin',name:'Super Admin',email:'admin@zdakrhyal.local',phone:'',password:H('Admin123!'),role:'superadmin',status:'verified',university:'',faculty:'',department:'',semester:'',academicYear:'',studentCode:'',createdAt:now(),notifications:[],activeSession:null}],
  universities:['کابل پوهنتون','کابل طبي پوهنتون','هرات پوهنتون','ننګرهار پوهنتون','بلخ پوهنتون','کندهار پوهنتون','پوهنتون های خصوصی','نور'],
- academicGroups:[{id:'medical',name:'طبي پوهنتون',faculties:['طب','ستوماتولوژي','فارمسي','نرسنګ','عامه روغتیا','وترنري علوم'],features:['qbank','clinicalCases']},{id:'engineering',name:'انجنیري پوهنتون',faculties:['انجنیري']},{id:'computer',name:'کمپیوټر ساینس پوهنتون',faculties:['کمپیوټر ساینس','مخابرات او معلوماتي ټکنالوژي']},{id:'economics',name:'اقتصاد او مدیریت پوهنتون',faculties:['اقتصاد','اداره او عامه پالیسي']},{id:'law',name:'حقوق او سیاسي علوم پوهنتون',faculties:['حقوق او سیاسي علوم','شرعیات']},{id:'education',name:'ښوونې او روزنې پوهنتون',faculties:['ښوونه او روزنه']},{id:'agriculture',name:'کرنې پوهنتون',faculties:['کرنه']},{id:'science',name:'ساینس پوهنتون',faculties:['ساینس','جیولوجي او کانونه','چاپېریال او طبیعي سرچینې']},{id:'social',name:'ټولنیزو علومو پوهنتون',faculties:['ژورنالیزم او رسنۍ','ژبې او ادبیات','ټولنیز علوم']},{id:'arts',name:'هنرونو او سپورت پوهنتون',faculties:['هنرونه','بدني روزنه','کتابتون او معلوماتي علوم']},{id:'other',name:'نور تخصصونه',faculties:['نور'],features:[]}],
  faculties:['طب','ستوماتولوژي','فارمسي','نرسنګ','عامه روغتیا','انجنیري','کمپیوټر ساینس','اقتصاد','حقوق او سیاسي علوم','اداره او عامه پالیسي','ښوونه او روزنه','کرنه','وترنري علوم','ساینس','جیولوجي او کانونه','ژورنالیزم او رسنۍ','ژبې او ادبیات','شرعیات','ټولنیز علوم','چاپېریال او طبیعي سرچینې','هنرونه','بدني روزنه','کتابتون او معلوماتي علوم','مخابرات او معلوماتي ټکنالوژي','نور'],
  departments:[{faculty:'طب',name:'عمومي طب'},{faculty:'ستوماتولوژي',name:'ستوماتولوژي'},{faculty:'فارمسي',name:'فارمسي'},{faculty:'نرسنګ',name:'نرسنګ'},{faculty:'کمپیوټر ساینس',name:'Computer Science'},{faculty:'کمپیوټر ساینس',name:'Software Engineering'},{faculty:'کمپیوټر ساینس',name:'Information Technology'},{faculty:'انجنیري',name:'سیول انجنیري'},{faculty:'انجنیري',name:'برېښنا انجنیري'},{faculty:'حقوق او سیاسي علوم',name:'حقوق'}],
  academicYears:['1404','1405','1406'],
@@ -52,7 +50,7 @@ function save(d){fs.writeFileSync(DB,JSON.stringify(d,null,2))}
 function auth(req,res,next){const p=parseToken((req.headers.authorization||'').replace(/^Bearer\s+/,'')||req.cookies?.zd);if(!p)return res.status(401).json({error:'Login required'});const d=db(),u=d.users.find(x=>x.id===p.uid);if(!u)return res.status(401).json({error:'Account not found'});if(u.role!=='superadmin'){if(!p.sid||!u.activeSession||u.activeSession.id!==p.sid)return res.status(401).json({error:'دا حساب په بل ځای کې Login شوی؛ پخوانی Session ختم شوی'});if(Date.parse(u.activeSession.expiresAt)<Date.now())return res.status(401).json({error:'Session ختم شوی؛ بیا Login وکړئ'})}req.user=u;req.db=d;next()}
 function admin(req,res,next){if(!['superadmin','admin'].includes(req.user.role))return res.status(403).json({error:'Admin only'});next()}
 function superOnly(req,res,next){if(req.user.role!=='superadmin')return res.status(403).json({error:'یوازې Super Admin ته اجازه شته'});next()}
-function academicAccess(u,c){if(u.status!=='verified')return 'Account لا نه دی تأیید شوی';if(c.approvalStatus&&c.approvalStatus!=='approved'&&c.status!=='published')return 'دا کورس لا تر اوسه تایید شوی نه دی';if(c.faculty&&u.faculty!==c.faculty)return 'دا محتوا ستاسې د پوهنځي لپاره نه ده';if(c.department&&u.department!==c.department)return 'دا محتوا ستاسې د رشتې لپاره نه ده';if(c.semester&&Number(c.semester)>Number(u.semester))return 'د لوړو سمسترونو محتوا ته لا تراوسه اجازه نشته';return null}
+function academicAccess(u,c){if(u.status!=='verified')return 'Account لا نه دی تأیید شوی';if(c.faculty&&u.faculty!==c.faculty)return 'دا محتوا ستاسې د پوهنځي لپاره نه ده';if(c.department&&u.department!==c.department)return 'دا محتوا ستاسې د رشتې لپاره نه ده';if(c.semester&&Number(c.semester)>Number(u.semester))return 'د لوړو سمسترونو محتوا ته لا تراوسه اجازه نشته';return null}
 function ownsCourse(d,u,id){return d.purchases.some(p=>p.userId===u.id&&p.courseId===id&&p.type==='course'&&p.status==='paid')}
 function ownsVideo(d,u,cid,vid){return d.purchases.some(p=>p.userId===u.id&&p.courseId===cid&&p.videoId===vid&&p.type==='video'&&p.status==='paid')}
 function canManage(req,perm){return req.user.role==='superadmin'||(req.user.role==='admin'&&((req.user.permissions||[]).includes(perm)||!(req.user.permissions)))}
@@ -76,15 +74,15 @@ app.post('/api/register',async(req,res)=>{
   const x=req.body,d=db(),phone=normalizePhone(x.phone),errors=validationErrors(x);
   if(x.faculty&&x.semester&&d.facultySemesters[x.faculty]&&Number(x.semester)>Number(d.facultySemesters[x.faculty]))errors.push('دا پوهنځی تر '+d.facultySemesters[x.faculty]+' سمستر پورې دی');
   if(errors.length)return res.status(400).json({error:errors[0],errors});
-  if(d.users.some(u=>u.registrationComplete!==false&&phone&&normalizePhone(u.phone)===phone))return res.status(409).json({error:'دا موبایل شمېره مخکې ثبت شوې ده'});
-  if(x.email&&d.users.some(u=>u.registrationComplete!==false&&u.email&&u.email.toLowerCase()===String(x.email).trim().toLowerCase()))return res.status(409).json({error:'دا Email مخکې ثبت شوی دی'});
-  const u={id:'u-'+T(),name:String(x.name).trim(),email:x.email||'',phone,password:H(x.password),role:'student',status:'pending',phoneVerified:true,
+  if(d.users.some(u=>phone&&normalizePhone(u.phone)===phone))return res.status(409).json({error:'دا موبایل شمېره مخکې ثبت شوې ده'});
+  if(x.email&&d.users.some(u=>u.email&&u.email===x.email))return res.status(409).json({error:'دا Email مخکې ثبت شوی دی'});
+  const u={id:'u-'+T(),name:String(x.name).trim(),email:x.email||'',phone,password:H(x.password),role:'student',status:'pending',phoneVerified:false,
     university:x.university,faculty:x.faculty,department:x.department,semester:String(x.semester),academicYear:x.academicYear,studentCode:'ZD-'+Math.random().toString(36).slice(2,8).toUpperCase(),
-    createdAt:now(),notifications:[],activeSession:null,termsAcceptedAt:now(),registrationComplete:true};
-  u.phoneVerified=true;u.phoneOtpHash='';u.phoneOtpExpiresAt='';u.phoneOtpAttempts=0;
-  
+    createdAt:now(),notifications:[],activeSession:null,termsAcceptedAt:now(),registrationComplete:false};
+  const code=makeOtp();u.phoneOtpHash=H(code);u.phoneOtpExpiresAt=new Date(Date.now()+600000).toISOString();u.phoneOtpAttempts=0;u.phoneOtpLastSentAt=now();
+  try{await sendSMS(phone,'ستاسې د زدکړیال Verification Code: '+code+' — ۱۰ دقیقې اعتبار لري.')}catch{return res.status(502).json({error:'SMS Verification Code ونه لېږل شو؛ مهرباني وکړئ وروسته بیا هڅه وکړئ'})}
   d.users.push(u);save(d);
-  res.json({message:'حساب مو جوړ شو. اوس ستاسې معلومات د Super Admin/Admin د تایید لپاره ثبت دي.',studentCode:u.studentCode,phoneVerificationRequired:false});
+  res.json({message:'لومړی د موبایل Verification Code ولیکئ. وروسته به ستاسې حساب د Super Admin/Admin تایید ته ولاړ شي.',studentCode:u.studentCode,phoneVerificationRequired:true});
 });
 app.post('/api/verify-phone',(req,res)=>{
   const phone=normalizePhone(req.body.phone),code=String(req.body.code||''),d=db(),u=d.users.find(x=>normalizePhone(x.phone)===phone&&x.role==='student');
@@ -99,7 +97,7 @@ app.post('/api/verify-phone',(req,res)=>{
 app.post('/api/resend-phone-code',async(req,res)=>{
   const phone=normalizePhone(req.body.phone),d=db(),u=d.users.find(x=>normalizePhone(x.phone)===phone&&x.role==='student');if(!u)return res.status(404).json({error:'محصل ونه موندل شو'});
   const last=u.phoneOtpLastSentAt?Date.parse(u.phoneOtpLastSentAt):0;if(last&&Date.now()-last<60000)return res.status(429).json({error:'نوی Code ۶۰ ثانیې وروسته وغواړئ'});
-  u.phoneVerified=true;u.phoneOtpHash='';u.phoneOtpExpiresAt='';u.phoneOtpAttempts=0;
+  const code=makeOtp();u.phoneOtpHash=H(code);u.phoneOtpExpiresAt=new Date(Date.now()+600000).toISOString();u.phoneOtpAttempts=0;u.phoneOtpLastSentAt=now();
   try{await sendSMS(phone,'ستاسې د زدکړیال نوی Verification Code: '+code+' — ۱۰ دقیقې اعتبار لري.')}catch{return res.status(502).json({error:'SMS Code ونه لېږل شو'})}
   save(d);res.json({message:'نوی Verification Code موبایل ته ولېږل شو'});
 });
@@ -123,78 +121,11 @@ app.post('/api/student/forgot-password/reset',(req,res)=>{
 app.post('/api/login',(req,res)=>{const x=req.body,d=db(),u=d.users.find(u=>((u.email&&u.email===x.identifier)||normalizePhone(u.phone)===normalizePhone(x.identifier))&&u.password===H(x.password));if(!u)return res.status(401).json({error:'Login معلومات ناسم دي'});if(u.role==='student'&&!u.phoneVerified)return res.status(403).json({error:'لومړی خپل موبایل Verify کړئ'});if(u.status==='pending')return res.status(403).json({error:'ستاسې حساب لا د Admin/Super Admin د تایید په انتظار کې دی'});if(u.status==='rejected'||u.status==='suspended'||u.status==='blocked')return res.status(403).json({error:'ستاسې Account '+u.status+' دی'});let sid=null;if(u.role!=='superadmin'){sid=T();u.activeSession={id:sid,deviceId:x.deviceId||'',createdAt:now(),expiresAt:new Date(Date.now()+30*864e5).toISOString()}}save(d);res.json({token:makeToken(u,sid),user:clean(u),replacedOldSession:u.role!=='superadmin'})});
 app.post('/api/logout',auth,(req,res)=>{if(req.user.role!=='superadmin'){req.user.activeSession=null;save(req.db)}res.json({message:'Logout بریالی شو'})});
 app.get('/api/me',auth,(req,res)=>res.json({user:clean(req.user)}));
-
-app.post('/api/ai/chat',auth,async(req,res)=>{
-  try{
-    const key=process.env.OPENROUTER_API_KEY;
-    if(!key)return res.status(503).json({error:'AI API لا Configure شوی نه دی'});
-
-    const message=String(req.body?.message||'').trim();
-    if(!message)return res.status(400).json({error:'پوښتنه خالي ده'});
-    if(message.length>8000)return res.status(400).json({error:'پوښتنه ډېره اوږده ده'});
-
-    const history=Array.isArray(req.body?.messages)
-      ? req.body.messages.slice(-10).filter(x=>x&&['user','assistant'].includes(x.role)&&typeof x.content==='string')
-      : [];
-
-    const messages=[
-      {
-        role:'system',
-        content:'ته د «زدکړیال» تعلیمي پلاتفورم AI تعلیمي مرستیال یې. د پښتو، دري او انګلیسي پوښتنو ته واضح، علمي او د زده‌کړې لپاره مناسب ځوابونه ورکړه. که پوښتنه طبي وي، علمي معلومات منظم وړاندې کړه او د جدي حالتونو لپاره د مسلکي طبي ارزونې اړتیا روښانه کړه.'
-      },
-      ...history,
-      {role:'user',content:message}
-    ];
-
-    const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{
-      method:'POST',
-      headers:{
-        'Authorization':'Bearer '+key,
-        'Content-Type':'application/json',
-        'HTTP-Referer':process.env.OPENROUTER_SITE_URL||'http://localhost:3000',
-        'X-Title':'Zdakrhyal'
-      },
-      body:JSON.stringify({
-        model:process.env.OPENROUTER_MODEL||'openrouter/free',
-        messages,
-        temperature:0.3,
-        max_tokens:1200
-      })
-    });
-
-    const data=await r.json().catch(()=>({}));
-    if(!r.ok){
-      console.error('[OPENROUTER ERROR]',r.status,data);
-      return res.status(502).json({
-        error:'AI خدمت ته د اتصال ستونزه',
-        providerStatus:r.status
-      });
-    }
-
-    const answer=data?.choices?.[0]?.message?.content;
-    if(!answer)return res.status(502).json({error:'AI ځواب ترلاسه نه شو'});
-
-    res.json({
-      answer,
-      model:data.model||process.env.OPENROUTER_MODEL||'openrouter/free'
-    });
-  }catch(e){
-    console.error('[AI ERROR]',e);
-    res.status(500).json({error:'AI خدمت کې داخلي ستونزه رامنځته شوه'});
-  }
-});
-
 app.post('/api/change-password',auth,(req,res)=>{if(req.user.password!==H(req.body.currentPassword))return res.status(400).json({error:'اوسنی Password ناسم دی'});if(String(req.body.newPassword||'').length<6)return res.status(400).json({error:'نوی Password لږ تر لږه ۶ حروف'});req.user.password=H(req.body.newPassword);save(req.db);res.json({message:'Password بدل شو؛ بیا Login وکړئ'})});
 app.get('/api/site',(req,res)=>res.json({site:db().site}));
 app.get('/api/academic',(req,res)=>{const d=db();res.json({universities:d.universities,faculties:d.faculties,departments:d.departments,academicYears:d.academicYears,semesters:d.semesters,facultySemesters:d.facultySemesters,subjects:d.subjects})});
-app.get('/api/courses',(req,res)=>{const d=db(),q=String(req.query.q||'').toLowerCase(),faculty=req.query.faculty||'';let courses=d.courses.filter(c=>(!c.approvalStatus||c.approvalStatus==='approved'||c.status==='published')&&(!faculty||c.faculty===faculty)&&(!q||JSON.stringify(c).toLowerCase().includes(q)));if(req.headers.authorization){try{const p=parseToken(req.headers.authorization.replace(/^Bearer\s+/,'')),u=p&&d.users.find(x=>x.id===p.uid);if(u&&u.role==='student'&&u.status==='verified')courses=courses.filter(c=>!c.faculty||c.faculty===u.faculty).filter(c=>!c.department||c.department===u.department).filter(c=>!c.semester||String(c.semester)<=String(u.semester));}catch{}}res.json({courses})});
-app.get('/api/courses/:id',(req,res)=>{
- const d=db(),c=d.courses.find(x=>x.id===req.params.id);
- if(!c)return res.status(404).json({error:'Course not found'});
- if(c.approvalStatus && c.approvalStatus!=='approved' && c.status!=='published')
-   return res.status(404).json({error:'Course لا تر اوسه خپور شوی نه دی'});
- res.json({course:c});
-});
+app.get('/api/courses',(req,res)=>{const d=db(),q=String(req.query.q||'').toLowerCase(),faculty=req.query.faculty||'';let courses=d.courses.filter(c=>(!faculty||c.faculty===faculty)&&(!q||JSON.stringify(c).toLowerCase().includes(q)));if(req.headers.authorization){try{const p=parseToken(req.headers.authorization.replace(/^Bearer\s+/,'')),u=p&&d.users.find(x=>x.id===p.uid);if(u&&u.role==='student'&&u.status==='verified')courses=courses.filter(c=>!c.faculty||c.faculty===u.faculty).filter(c=>!c.department||c.department===u.department).filter(c=>!c.semester||String(c.semester)<=String(u.semester));}catch{}}res.json({courses})});
+app.get('/api/courses/:id',(req,res)=>{const c=db().courses.find(x=>x.id===req.params.id);if(!c)return res.status(404).json({error:'Course not found'});res.json({course:c})});
 app.get('/api/courses/:id/access',auth,(req,res)=>{const d=db(),c=d.courses.find(x=>x.id===req.params.id);if(!c)return res.status(404).json({error:'Course not found'});const err=academicAccess(req.user,c);res.json({allowed:!err,error:err,full:!err&&ownsCourse(d,req.user,c.id)})});
 app.get('/api/books',(req,res)=>{const d=db();let books=d.books;if(req.query.faculty)books=books.filter(b=>b.faculty===req.query.faculty);if(req.headers.authorization){try{const p=parseToken(req.headers.authorization.replace(/^Bearer\s+/,'')),u=p&&d.users.find(x=>x.id===p.uid);if(u&&u.role==='student'&&u.status==='verified')books=books.filter(b=>(!b.faculty||b.faculty===u.faculty)&&(!b.department||b.department===u.department)&&(!b.semester||Number(b.semester)<=Number(u.semester)));}catch{}}res.json({books})});
 app.get('/api/my-purchases',auth,(req,res)=>res.json({orders:req.db.orders.filter(o=>o.userId===req.user.id).slice(0,100),purchases:req.db.purchases.filter(p=>p.userId===req.user.id)}));
@@ -210,42 +141,15 @@ app.post('/api/video/:courseId/:videoId/like',auth,(req,res)=>{const c=req.db.co
 app.post('/api/video/:courseId/:videoId/comment',auth,(req,res)=>{const c=req.db.courses.find(x=>x.id===req.params.courseId),v=c&&c.videos.find(x=>x.id===req.params.videoId);const text=String(req.body.text||'').trim();if(!c||!v||!text)return res.status(400).json({error:'Comment ضروري دی'});v.comments=v.comments||[];v.comments.unshift({id:'cm-'+T(),userId:req.user.id,name:req.user.name,text:text.slice(0,1000),createdAt:now()});save(req.db);res.json({ok:true})});
 app.post('/api/video/:courseId/:videoId/share',auth,(req,res)=>{const c=req.db.courses.find(x=>x.id===req.params.courseId),v=c&&c.videos.find(x=>x.id===req.params.videoId);if(!c||!v)return res.status(404).json({error:'not found'});v.shares=(v.shares||0)+1;save(req.db);res.json({shares:v.shares,url:'/course/'+c.id+'?video='+v.id})});
 
-app.get('/api/admin/dashboard',auth,admin,(req,res)=>{const d=req.db,students=d.users.filter(u=>u.role==='student'),teachers=d.users.filter(u=>u.role==='teacher');const by=(field)=>{const m={};students.forEach(u=>{const k=u[field]||'—';m[k]=(m[k]||0)+1});return m};const matrix={};students.forEach(u=>{const k=[u.university||'—',u.faculty||'—',u.department||'—',u.semester||'—',u.academicYear||'—'].join(' | ');matrix[k]=(matrix[k]||0)+1});res.json({role:req.user.role,stats:{totalUsers:d.users.length,students:students.length,teachers:teachers.length,pending:students.filter(u=>u.status==='pending').length+teachers.filter(u=>u.status==='pending').length,verified:students.filter(u=>u.status==='verified').length,courses:d.courses.length,videos:d.courses.reduce((n,c)=>n+(c.videos||[]).length,0),pendingCourses:d.courses.filter(c=>c.approvalStatus==="pending"||c.status==="review").length,books:d.books.length,orders:d.orders.length,pendingOrders:d.orders.filter(o=>o.status==='pending').length,revenue:d.orders.filter(o=>o.status==='paid').reduce((n,o)=>n+Number(o.amount||0),0)},byUniversity:by('university'),byFaculty:by('faculty'),byDepartment:by('department'),bySemester:by('semester'),byAcademicYear:by('academicYear'),academicMatrix:matrix})});
+app.get('/api/admin/dashboard',auth,admin,(req,res)=>{const d=req.db,students=d.users.filter(u=>u.role==='student'),teachers=d.users.filter(u=>u.role==='teacher');const by=(field)=>{const m={};students.forEach(u=>{const k=u[field]||'—';m[k]=(m[k]||0)+1});return m};const matrix={};students.forEach(u=>{const k=[u.university||'—',u.faculty||'—',u.department||'—',u.semester||'—',u.academicYear||'—'].join(' | ');matrix[k]=(matrix[k]||0)+1});res.json({role:req.user.role,stats:{totalUsers:d.users.length,students:students.length,teachers:teachers.length,pending:students.filter(u=>u.status==='pending').length+teachers.filter(u=>u.status==='pending').length,verified:students.filter(u=>u.status==='verified').length,courses:d.courses.length,videos:d.courses.reduce((n,c)=>n+(c.videos||[]).length,0),books:d.books.length,orders:d.orders.length,pendingOrders:d.orders.filter(o=>o.status==='pending').length,revenue:d.orders.filter(o=>o.status==='paid').reduce((n,o)=>n+Number(o.amount||0),0)},byUniversity:by('university'),byFaculty:by('faculty'),byDepartment:by('department'),bySemester:by('semester'),byAcademicYear:by('academicYear'),academicMatrix:matrix})});
 app.get('/api/admin/users',auth,admin,(req,res)=>{const d=req.db,q=String(req.query.q||'').toLowerCase(),faculty=req.query.faculty||'',department=req.query.department||'',semester=req.query.semester||'',status=req.query.status||'',role=req.query.role||'';let users=d.users.filter(u=>u.role!=='superadmin');users=users.filter(u=>(!q||JSON.stringify(u).toLowerCase().includes(q))&&(!faculty||u.faculty===faculty)&&(!department||u.department===department)&&(!semester||String(u.semester)===String(semester))&&(!status||u.status===status)&&(!role||u.role===role));res.json({users:users.map(clean)})});
-app.post('/api/admin/users/:id/status',auth,requirePerm('users'),(req,res)=>{const d=req.db,u=d.users.find(x=>x.id===req.params.id);if(!u)return res.status(404).json({error:'User not found'});u.status=String(req.body.status||'pending');if(u.status==='verified')notify(d,u.id,'Account تأیید شو','ستاسې حساب د زدکړیال Admin له خوا تأیید شو. اوس تاسې کولی شئ خپل مجاز تعلیمي محتوا ته لاسرسی ومومئ.');else if(u.status==='blocked'||u.status==='rejected')notify(d,u.id,'Registration رد شو','ستاسې د زدکړیال ثبت‌نام غوښتنه رد شوې ده. د نورو معلوماتو لپاره له Admin سره اړیکه ونیسئ.');save(d);res.json({user:clean(u)})});
+app.post('/api/admin/users/:id/status',auth,requirePerm('users'),(req,res)=>{const d=req.db,u=d.users.find(x=>x.id===req.params.id);if(!u)return res.status(404).json({error:'User not found'});u.status=String(req.body.status||'pending');if(u.status==='verified')notify(d,u.id,'Account تأیید شو','ستاسې حساب د زدکړیال Admin له خوا تأیید شو.');save(d);res.json({user:clean(u)})});
 app.get('/api/admin/orders',auth,admin,(req,res)=>res.json({orders:req.db.orders.map(o=>({...o,userName:req.db.users.find(u=>u.id===o.userId)?.name||''}))}));
 app.post('/api/admin/orders/:id/status',auth,requirePerm('payments'),(req,res)=>{const d=req.db,o=d.orders.find(x=>x.id===req.params.id);if(!o)return res.status(404).json({error:'Order not found'});o.status=String(req.body.status||'pending');if(o.status==='paid'){d.purchases.push({id:'pur-'+T(),userId:o.userId,type:o.type,courseId:o.courseId,videoId:o.videoId,status:'paid',amount:o.amount,createdAt:now()});notify(d,o.userId,'Payment تایید شو','ستاسې Purchase تایید شو او محتوا فعال شوه.')}save(d);res.json({order:o})});
 
 app.get('/api/live-classes',(req,res)=>{const d=db();res.json({liveClasses:d.liveClasses.filter(x=>x.status!=='deleted').map(x=>({...x,teacher:x.teacherName||x.teacher||''}))})});
 app.post('/api/superadmin/live-classes',auth,superOnly,(req,res)=>{const d=req.db,x=req.body;if(!x.title||!x.teacherName||!x.faculty||!x.semester)return res.status(400).json({error:'عنوان، استاد، پوهنځی او سمستر ضروري دي'});const l={id:'live-'+T(),title:x.title,teacherName:x.teacherName,faculty:x.faculty,department:x.department||'',semester:String(x.semester),academicYear:x.academicYear||'',date:x.date||'',time:x.time||'',url:x.url||'',status:'scheduled',createdAt:now()};d.liveClasses.unshift(l);save(d);res.json({liveClass:l})});
 app.post('/api/admin/courses',auth,requirePerm('courses'),(req,res)=>{const d=req.db,x=req.body,c={id:'c-'+T(),title:x.title,teacher:x.teacher||'',faculty:x.faculty,department:x.department||'',semester:x.semester||'',academicYear:x.academicYear||'',price:Number(x.price||0),description:x.description||'',downloadable:!!x.downloadable,videos:[],createdAt:now()};d.courses.unshift(c);save(d);res.json({course:c})});
-app.get('/api/admin/courses/pending',auth,requirePerm('courses'),(req,res)=>{const d=req.db;const courses=d.courses.filter(c=>c.approvalStatus==='pending'||c.status==='review').map(c=>({...c,teacherName:c.teacher||'',teacherUserId:c.teacherId||''}));res.json({courses})});
-app.post('/api/admin/courses/:id/status',auth,requirePerm('courses'),(req,res)=>{
- const d=req.db,c=d.courses.find(x=>x.id===req.params.id);
- if(!c)return res.status(404).json({error:'Course not found'});
- const status=String(req.body.status||'').toLowerCase();
- if(['approved','rejected','pending'].indexOf(status)<0)return res.status(400).json({error:'Status ناسم دی'});
-
- if(req.body.price!==undefined){
-  const price=Number(req.body.price);
-  if(!Number.isFinite(price)||price<0)return res.status(400).json({error:'د کورس قیمت ناسم دی'});
-  c.price=price;
- }
-
- c.approvalStatus=status;
- c.status=status==='approved'?'published':status==='rejected'?'rejected':'review';
-
- if(c.teacherId){
-  notify(d,c.teacherId,
-   status==='approved'?'Course Approved':status==='rejected'?'Course Rejected':'Course Pending',
-   status==='approved'?'ستاسې کورس تایید او خپور شو.':status==='rejected'?'ستاسې کورس رد شو؛ د اصلاح وروسته بیا Submit کولی شئ.':'ستاسې کورس لا هم د Review په حالت کې دی.'
-  );
- }
-
- audit(d,req,'course.'+status,(c.title||c.id)+' | Price: '+String(c.price||0)+' AFN');
- save(d);
- res.json({course:c});
-});
 app.post('/api/admin/courses/:id/videos',auth,requirePerm('courses'),(req,res)=>{const d=req.db,c=d.courses.find(x=>x.id===req.params.id);if(!c)return res.status(404).json({error:'Course not found'});const v={id:'v-'+T(),title:req.body.title,price:Number(req.body.price||0),durationSeconds:Number(req.body.durationSeconds||0),videoUrl:req.body.videoUrl||'',file:'',mime:'video/mp4',createdAt:now(),likes:0,shares:0,comments:[]};c.videos.push(v);save(d);res.json({video:v})});
 app.delete('/api/admin/courses/:id',auth,requirePerm('courses'),(req,res)=>{const d=req.db,i=d.courses.findIndex(x=>x.id===req.params.id);if(i<0)return res.status(404).json({error:'not found'});d.courses.splice(i,1);save(d);res.json({ok:true})});
 app.post('/api/admin/upload',auth,requirePerm('content'),(req,res)=>{upload.single('file')(req,res,err=>{if(err)return res.status(400).json({error:err.message||'Upload failed'});if(!req.file)return res.status(400).json({error:'فایل ټاکل شوی نه دی'});const type=req.body.type||'image',url='/uploads/'+req.file.filename,d=req.db;if(type==='image'){if(!/^image\//.test(req.file.mimetype))return res.status(400).json({error:'یوازې عکس'});d.site.gallery.unshift({id:'img-'+T(),url,name:req.file.originalname,createdAt:now()});save(d);return res.json({file:url,type})}if(type==='video'){if(!/^video\//.test(req.file.mimetype))return res.status(400).json({error:'یوازې ویډیو'});const c=d.courses.find(x=>x.id===req.body.courseId);if(!c)return res.status(400).json({error:'Course ID ناسم دی'});const v={id:'v-'+T(),title:req.body.title||req.file.originalname,price:Number(req.body.price||0),durationSeconds:Number(req.body.durationSeconds||0),file:req.file.filename,mime:req.file.mimetype,videoUrl:'',createdAt:now(),likes:0,shares:0,comments:[]};c.videos.push(v);save(d);return res.json({file:url,type,video:v})}if(type==='pdf'){if(req.file.mimetype!=='application/pdf')return res.status(400).json({error:'یوازې PDF'});const b={id:'b-'+T(),title:req.body.title||req.file.originalname,faculty:req.body.faculty||'',department:req.body.department||'',semester:req.body.semester||'',academicYear:req.body.academicYear||'',author:req.body.author||'',description:req.body.description||'',pdfFile:req.file.filename,createdAt:now()};d.books.unshift(b);save(d);return res.json({file:url,type,book:b})}res.status(400).json({error:'Upload type ناسم دی'})})});
@@ -288,7 +192,7 @@ app.delete('/api/wishlist/:courseId',auth,(req,res)=>{const d=req.db;d.wishlists
 app.post('/api/notifications/:id/read',auth,(req,res)=>{const n=(req.user.notifications||[]).find(x=>x.id===req.params.id);if(!n)return res.status(404).json({error:'Notification نه شته'});n.read=true;save(req.db);res.json({ok:true})});
 app.post('/api/payment/receipt',auth,upload.single('receipt'),(req,res)=>{if(!req.file)return res.status(400).json({error:'د بانک رسید فایل وټاکئ'});if(req.file.mimetype!=='application/pdf'&&!/^image\/(jpeg|png|webp)$/.test(req.file.mimetype))return res.status(400).json({error:'رسید باید JPG, PNG, WebP یا PDF وي'});const d=req.db,o=d.orders.find(x=>x.id===req.body.orderId&&x.userId===req.user.id);if(!o)return res.status(404).json({error:'Order ونه موندل شو'});o.receiptFile=req.file.filename;o.receiptOriginalName=req.file.originalname;o.receiptUploadedAt=now();o.status='pending_review';audit(d,req,'payment.receipt','order '+o.id);save(d);notify(d,'superadmin','نوی Payment Receipt','محصل د Order '+o.id+' لپاره رسید پورته کړ.');res.json({message:'رسید ثبت شو؛ Admin به یې Review کړي.'})});
 app.get('/api/my-certificates',auth,(req,res)=>{const d=req.db;const certs=(d.certificates||[]).filter(x=>x.userId===req.user.id);res.json({certificates:certs})});
-app.post('/api/teacher/courses',auth,(req,res)=>{if(req.user.role!=='teacher')return res.status(403).json({error:'یوازې استاد'});const d=req.db,x=req.body;if(!String(x.title||'').trim())return res.status(400).json({error:'د کورس عنوان ضروري دی'});const c={id:'c-'+T(),title:String(x.title).trim(),description:String(x.description||''),price:0,teacher:req.user.name,teacherId:req.user.id,university:req.user.university||'',faculty:req.user.faculty||'',department:req.user.department||'',semester:req.user.semester||'',academicYear:req.user.academicYear||'',status:'review',approvalStatus:'pending',videos:[],createdAt:now(),studentsCount:0,progress:{}};d.courses.unshift(c);audit(d,req,'course.submit',c.title);save(d);notify(d,'superadmin','نوی کورس د Review لپاره','استاد '+req.user.name+' نوی کورس Submit کړ: '+c.title);res.json({course:c})});
+app.post('/api/teacher/courses',auth,(req,res)=>{if(req.user.role!=='teacher')return res.status(403).json({error:'یوازې استاد'});const d=req.db,x=req.body;if(!String(x.title||'').trim())return res.status(400).json({error:'د کورس عنوان ضروري دی'});const c={id:'c-'+T(),title:String(x.title).trim(),description:String(x.description||''),price:Number(x.price||0),teacher:req.user.name,teacherId:req.user.id,university:req.user.university||'',faculty:req.user.faculty||'',department:req.user.department||'',semester:req.user.semester||'',academicYear:req.user.academicYear||'',status:'review',approvalStatus:'pending',videos:[],createdAt:now(),studentsCount:0,progress:{}};d.courses.unshift(c);audit(d,req,'course.submit',c.title);save(d);notify(d,'superadmin','نوی کورس د Review لپاره','استاد '+req.user.name+' نوی کورس Submit کړ: '+c.title);res.json({course:c})});
 app.get('/api/teacher/earnings',auth,(req,res)=>{if(!['teacher','admin','superadmin'].includes(req.user.role))return res.status(403).json({error:'اجازه نشته'});const d=req.db;const total=(d.purchases||[]).filter(p=>p.status==='paid').reduce((sum,p)=>{const c=d.courses.find(c=>c.id===p.courseId&&c.teacherId===req.user.id);return sum+(c?Number(p.amount||0):0)},0);res.json({total})});
 app.post('/api/admin/notify',auth,requirePerm('users'),(req,res)=>{const d=req.db,u=d.users.find(x=>x.id===req.body.userId);if(!u)return res.status(404).json({error:'User نه شته'});notify(d,u.id,String(req.body.title||'Notification'),String(req.body.message||''));audit(d,req,'notification.send','to '+u.id);save(d);res.json({ok:true})});
 app.get('/api/admin/analytics',auth,admin,(req,res)=>{const d=req.db;const videos=d.courses.reduce((n,c)=>n+(c.videos||[]).length,0);const revenue=(d.purchases||[]).filter(p=>p.status==='paid').reduce((n,p)=>n+Number(p.amount||0),0);res.json({users:d.users.length,students:d.users.filter(u=>u.role==='student').length,teachers:d.users.filter(u=>u.role==='teacher').length,courses:d.courses.length,videos,books:d.books.length,revenue})});
@@ -299,278 +203,6 @@ app.get('/api/superadmin/supabase-health',auth,superOnly,async(req,res)=>{try{re
 app.post('/api/superadmin/settings',auth,superOnly,(req,res)=>{const d=req.db;d.settings=d.settings||{};Object.assign(d.settings,{platformName:String(req.body.platformName||'زدکړیال'),defaultLanguage:String(req.body.defaultLanguage||'ps'),maintenance:req.body.maintenance==='on'||req.body.maintenance===true});audit(d,req,'settings.update','platform settings');save(d);res.json({settings:d.settings})});
 
 // PDF downloads are protected by academic access.
-app.get('/api/admin/mcq/books',auth,requirePerm('content'),(req,res)=>{
-  const d=req.db;
-  res.json({
-    books:(d.books||[]).map(b=>({
-      id:b.id,
-      title:b.title,
-      faculty:b.faculty||'',
-      department:b.department||'',
-      semester:b.semester||'',
-      academicYear:b.academicYear||'',
-      author:b.author||'',
-      pdfFile:b.pdfFile||''
-    })).filter(b=>b.pdfFile)
-  });
-});
-
-app.get('/api/admin/mcq/page-text/:id',auth,requirePerm('content'),async(req,res)=>{
-  try{
-    const d=req.db;
-    const b=d.books.find(x=>x.id===req.params.id);
-    if(!b)return res.status(404).json({error:'کتاب پیدا نه شو'});
-    if(!b.pdfFile)return res.status(404).json({error:'د کتاب PDF موجود نه دی'});
-
-    const page=Number(req.query.page||1);
-    if(!Number.isInteger(page)||page<1)return res.status(400).json({error:'Page باید له 1 څخه پورته صحیح عدد وي'});
-
-    const f=path.join(UPLOADS,path.basename(b.pdfFile));
-    if(!fs.existsSync(f))return res.status(404).json({error:'PDF فایل په Server کې پیدا نه شو'});
-
-    const buffer=fs.readFileSync(f);
-    const parsed=await pdfParse(buffer,{
-      pagerender:async function(pageData){
-        const renderOptions={
-          normalizeWhitespace:false,
-          disableCombineTextItems:false
-        };
-        const textContent=await pageData.getTextContent(renderOptions);
-        return textContent.items.map(item=>item.str).join(' ');
-      }
-    });
-
-    const pages=String(parsed.text||'').split('\f');
-    if(page>pages.length)return res.status(400).json({
-      error:'دغه Page په PDF کې نشته',
-      pageCount:pages.length
-    });
-
-    const text=String(pages[page-1]||'').trim();
-
-    res.json({
-      bookId:b.id,
-      title:b.title,
-      page,
-      pageCount:pages.length,
-      text
-    });
-  }catch(e){
-    console.error('[MCQ PAGE TEXT ERROR]',e);
-    res.status(500).json({error:'د PDF د پاڼې متن ترلاسه نه شو'});
-  }
-});
-
-app.post('/api/admin/mcq/generate',auth,requirePerm('content'),async(req,res)=>{
-  try{
-    const key=process.env.OPENROUTER_API_KEY;
-    if(!key)return res.status(503).json({error:'AI API لا Configure شوی نه دی'});
-
-    const d=req.db;
-    const bookId=String(req.body?.bookId||'');
-    const page=Number(req.body?.page||0);
-    const count=Math.min(Math.max(Number(req.body?.count||5),1),20);
-    const language=String(req.body?.language||'ps');
-    const difficulty=String(req.body?.difficulty||'medium');
-
-    const b=d.books.find(x=>x.id===bookId);
-    if(!b)return res.status(404).json({error:'کتاب پیدا نه شو'});
-    if(!b.pdfFile)return res.status(404).json({error:'د کتاب PDF موجود نه دی'});
-    if(!Number.isInteger(page)||page<1)return res.status(400).json({error:'Page نمبر ناسم دی'});
-
-    const f=path.join(UPLOADS,path.basename(b.pdfFile));
-    if(!fs.existsSync(f))return res.status(404).json({error:'PDF فایل په Server کې پیدا نه شو'});
-
-    const buffer=fs.readFileSync(f);
-    const parsed=await pdfParse(buffer,{
-      pagerender:async function(pageData){
-        const textContent=await pageData.getTextContent({
-          normalizeWhitespace:false,
-          disableCombineTextItems:false
-        });
-        return textContent.items.map(item=>item.str).join(' ');
-      }
-    });
-
-    const pages=String(parsed.text||'').split('\f');
-    if(page>pages.length)return res.status(400).json({
-      error:'دغه Page په PDF کې نشته',
-      pageCount:pages.length
-    });
-
-    const sourceText=String(pages[page-1]||'').trim();
-    if(!sourceText)return res.status(400).json({error:'په دې Page کې د AI لپاره متن پیدا نه شو'});
-
-    const langName=language==='fa'?'دري':language==='en'?'English':'پښتو';
-
-    const prompt=`You are an educational MCQ generator.
-
-Generate exactly ${count} multiple-choice questions from ONLY the supplied page text below.
-
-Language: ${langName}
-Difficulty: ${difficulty}
-
-Rules:
-- Use ONLY information explicitly supported by the supplied page.
-- Do not add outside facts.
-- Each question must have exactly 4 options.
-- Exactly one option must be correct.
-- Include a clear explanation based only on the page.
-- Return valid JSON only.
-- No markdown.
-- JSON format:
-{
-  "questions":[
-    {
-      "question":"...",
-      "options":["...","...","...","..."],
-      "correctIndex":0,
-      "explanation":"..."
-    }
-  ]
-}
-
-Book: ${b.title}
-Page: ${page}
-
-PAGE TEXT:
-${sourceText}`;
-
-    const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{
-      method:'POST',
-      headers:{
-        'Authorization':'Bearer '+key,
-        'Content-Type':'application/json',
-        'HTTP-Referer':process.env.OPENROUTER_SITE_URL||'http://localhost:3000',
-        'X-Title':'Zdakrhyal MCQ Generator'
-      },
-      body:JSON.stringify({
-        model:process.env.OPENROUTER_MODEL||'openrouter/free',
-        messages:[
-          {
-            role:'system',
-            content:'You generate educational MCQs and must return valid JSON only.'
-          },
-          {role:'user',content:prompt}
-        ],
-        temperature:0.2,
-        max_tokens:4000
-      })
-    });
-
-    const data=await r.json().catch(()=>({}));
-
-    if(!r.ok){
-      console.error('[MCQ OPENROUTER ERROR]',r.status,data);
-      return res.status(502).json({
-        error:'AI ته د MCQ جوړولو غوښتنه ناکامه شوه',
-        providerStatus:r.status
-      });
-    }
-
-    const raw=data?.choices?.[0]?.message?.content;
-    if(!raw)return res.status(502).json({error:'AI د MCQ متن ونه لېږه'});
-
-    let parsedAI;
-    try{
-      parsedAI=JSON.parse(String(raw).trim());
-    }catch(e){
-      const cleaned=String(raw).replace(/^```json\s*/i,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
-      try{
-        parsedAI=JSON.parse(cleaned);
-      }catch(e2){
-        console.error('[MCQ JSON ERROR]',raw);
-        return res.status(502).json({error:'AI معتبر JSON MCQ ونه راکړ'});
-      }
-    }
-
-    const questions=Array.isArray(parsedAI?.questions)?parsedAI.questions:[];
-
-    const valid=questions.map(q=>({
-      question:String(q.question||'').trim(),
-      options:Array.isArray(q.options)?q.options.map(x=>String(x||'').trim()).filter(Boolean).slice(0,4):[],
-      correctIndex:Number(q.correctIndex),
-      explanation:String(q.explanation||'').trim()
-    })).filter(q=>
-      q.question &&
-      q.options.length===4 &&
-      Number.isInteger(q.correctIndex) &&
-      q.correctIndex>=0 &&
-      q.correctIndex<4
-    );
-
-    if(!valid.length)return res.status(502).json({error:'AI معتبر MCQ جوړ نه کړل'});
-
-    res.json({
-      bookId:b.id,
-      bookTitle:b.title,
-      page,
-      language,
-      difficulty,
-      questions:valid,
-      model:data.model||process.env.OPENROUTER_MODEL||'openrouter/free'
-    });
-
-  }catch(e){
-    console.error('[MCQ GENERATE ERROR]',e);
-    res.status(500).json({error:'د MCQ جوړولو پر مهال داخلي ستونزه رامنځته شوه'});
-  }
-});
-
-app.post('/api/admin/mcq/save',auth,requirePerm('content'),(req,res)=>{
-  try{
-    const d=req.db;
-    d.mcqs=d.mcqs||[];
-
-    const bookId=String(req.body?.bookId||'');
-    const page=Number(req.body?.page||0);
-    const questions=Array.isArray(req.body?.questions)?req.body.questions:[];
-
-    const book=d.books.find(x=>x.id===bookId);
-    if(!book)return res.status(404).json({error:'کتاب پیدا نه شو'});
-    if(!Number.isInteger(page)||page<1)return res.status(400).json({error:'Page نمبر ناسم دی'});
-    if(!questions.length)return res.status(400).json({error:'هیڅ MCQ موجود نه دی'});
-
-    const saved=[];
-
-    for(const q of questions){
-      const question=String(q.question||'').trim();
-      const options=Array.isArray(q.options)
-        ?q.options.map(x=>String(x||'').trim()).slice(0,4)
-        :[];
-      const correctIndex=Number(q.correctIndex);
-      const explanation=String(q.explanation||'').trim();
-
-      if(!question||options.length!==4)return res.status(400).json({error:'هر MCQ باید سوال او 4 options ولري'});
-      if(!Number.isInteger(correctIndex)||correctIndex<0||correctIndex>3)return res.status(400).json({error:'Correct answer ناسم دی'});
-
-      const item={
-        id:'mcq-'+T(),
-        bookId:book.id,
-        bookTitle:book.title,
-        page,
-        question,
-        options,
-        correctIndex,
-        explanation,
-        createdBy:req.user.id,
-        createdAt:now(),
-        updatedAt:now(),
-        status:'published'
-      };
-
-      d.mcqs.push(item);
-      saved.push(item);
-    }
-
-    save(d);
-    res.json({ok:true,saved:saved.length,questions:saved});
-  }catch(e){
-    console.error('[MCQ SAVE ERROR]',e);
-    res.status(500).json({error:'MCQ Save کې داخلي ستونزه رامنځته شوه'});
-  }
-});
-
 app.get('/api/book/:id/file',auth,(req,res)=>{const d=req.db,b=d.books.find(x=>x.id===req.params.id);if(!b)return res.status(404).end();const err=academicAccess(req.user,b);if(err)return res.status(403).json({error:err});if(!b.pdfFile)return res.status(404).end();const f=path.join(UPLOADS,path.basename(b.pdfFile));if(!fs.existsSync(f))return res.status(404).end();res.sendFile(f)});
 app.use('/uploads',express.static(UPLOADS,{index:false,setHeaders:(res,p)=>{if(/\.(mp4|webm|mov|pdf)$/i.test(p))res.statusCode=404}}));
 
@@ -599,7 +231,6 @@ app.get('/api/academic/catalog', (req,res)=>{
   const d=db();
   res.json({
     universities:d.universities,
-    academicGroups:d.academicGroups||[],
     faculties:d.faculties,
     departments:d.departments,
     programs:d.programs||[],
@@ -627,8 +258,8 @@ app.get('/api/academic/programs',(req,res)=>{
 app.get('/api/academic/semesters',(req,res)=>{
   const d=db(); const faculty=String(req.query.faculty||'');
   const max=Number((d.facultySemesters||{})[faculty]||0);
-  const list=max>0 ? Array.from({length:max},(_,i)=>String(i+1)) : [];
-  res.json({faculty,maximum:max,semesters:list});
+  const list=Array.from({length:max||11},(_,i)=>String(i+1));
+  res.json({faculty,maximum:max||11,semesters:list});
 });
 app.get('/api/academic/subjects',(req,res)=>{
   const d=db(); let x=arr(d,'subjects');
@@ -641,7 +272,7 @@ app.get('/api/academic/subjects',(req,res)=>{
 
 app.get('/api/student/academic-profile',auth,requireVerifiedStudent,(req,res)=>{
   const u=req.user,d=req.db;
-  res.json({student:{id:u.id,name:u.name,studentCode:u.studentCode,university:u.university,faculty:u.faculty,department:u.department,program:u.program||'',semester:u.semester,academicYear:u.academicYear,academicStanding:u.academicStanding||'good'},maximumSemester:Number((d.facultySemesters||{})[u.faculty]||0)});
+  res.json({student:{id:u.id,name:u.name,studentCode:u.studentCode,university:u.university,faculty:u.faculty,department:u.department,program:u.program||'',semester:u.semester,academicYear:u.academicYear,academicStanding:u.academicStanding||'good'},maximumSemester:Number((d.facultySemesters||{})[u.faculty]||11)});
 });
 
 app.get('/api/student/subjects',auth,requireVerifiedStudent,(req,res)=>{
@@ -652,62 +283,17 @@ app.get('/api/student/subjects',auth,requireVerifiedStudent,(req,res)=>{
 
 app.get('/api/student/transcript',auth,requireVerifiedStudent,(req,res)=>{
   const d=req.db;
-  const subjects=arr(d,'subjects');
-  const rows=arr(d,'transcriptRecords')
-    .filter(x=>x.userId===req.user.id)
-    .map(x=>{
-      const subject=subjects.find(s=>s.id===x.subjectId);
-      return {
-        ...x,
-        subjectName:subject?.name||subject?.title||x.subjectId||'مضمون',
-        subjectCode:subject?.code||''
-      };
-    });
+  const rows=arr(d,'transcriptRecords').filter(x=>x.userId===req.user.id);
   const credits=rows.reduce((n,x)=>n+Number(x.credits||0),0);
   const quality=rows.reduce((n,x)=>n+(Number(x.credits||0)*Number(x.gradePoint||0)),0);
-  res.json({
-    records:rows,
-    totalCredits:credits,
-    gpa:credits?Number((quality/credits).toFixed(2)):0
-  });
+  res.json({records:rows,totalCredits:credits,gpa:credits?Number((quality/credits).toFixed(2)):0});
 });
 
 app.get('/api/student/attendance',auth,requireVerifiedStudent,(req,res)=>{
-  const d=req.db;
-  const subjects=arr(d,'subjects');
-  const rows=arr(d,'attendance').filter(x=>x.userId===req.user.id);
+  const rows=arr(req.db,'attendance').filter(x=>x.userId===req.user.id);
   const grouped={};
-
-  rows.forEach(x=>{
-    const k=x.subjectId||x.subject||'unknown';
-    if(!grouped[k]){
-      const subject=subjects.find(s=>s.id===k);
-      grouped[k]={
-        subjectId:k,
-        subjectName:subject?.name||subject?.title||k||'مضمون',
-        subjectCode:subject?.code||'',
-        total:0,
-        present:0,
-        absent:0,
-        late:0,
-        excused:0
-      };
-    }
-
-    grouped[k].total++;
-
-    if(x.status==='present') grouped[k].present++;
-    else if(x.status==='late') grouped[k].late++;
-    else if(x.status==='excused') grouped[k].excused++;
-    else grouped[k].absent++;
-  });
-
-  Object.values(grouped).forEach(x=>{
-    x.percent=x.total
-      ? Number(((x.present+x.late*.5)/x.total*100).toFixed(1))
-      : 0;
-  });
-
+  rows.forEach(x=>{const k=x.subjectId||x.subject||'unknown';grouped[k]=grouped[k]||{subjectId:k,total:0,present:0,absent:0,late:0};grouped[k].total++;if(x.status==='present')grouped[k].present++;else if(x.status==='late')grouped[k].late++;else grouped[k].absent++});
+  Object.values(grouped).forEach(x=>x.percent=x.total?Number(((x.present+x.late*.5)/x.total*100).toFixed(1)):0);
   res.json({attendance:Object.values(grouped)});
 });
 
@@ -751,8 +337,6 @@ app.post('/api/admin/academic/grade',auth,admin,(req,res)=>{
 
 app.get('/api/admin/students/pending',auth,admin,(req,res)=>res.json({students:req.db.users.filter(u=>u.role==='student'&&u.status==='pending').map(clean)}));
 
-
-app.use('/mobile',express.static(path.join(__dirname,'mobile')));
 
 app.get('*',(req,res)=>res.sendFile(path.join(__dirname,'public','index.html')));
 app.listen(PORT,()=>console.log('زدکړیال server on '+PORT));

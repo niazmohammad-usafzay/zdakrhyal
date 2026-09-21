@@ -1,9 +1,596 @@
-<!doctype html><html lang="ps" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102a43"><link rel="manifest" href="/manifest.json"><link rel="stylesheet" href="/style.css"><title>زدکړیال</title></head><body>
-<header><b>زدکړیال</b><nav><button onclick="show('home')">کور</button><button onclick="show('courses')">کورسونه</button><button onclick="show('books')">کتابتون</button><button onclick="show('account')">حساب</button><button onclick="show('register')">ثبت نام</button><button onclick="show('login')">Login</button><button id="an" class="hide" onclick="show('admin')">Admin</button></nav></header><main>
-<section id="home" class="page active"><div class="hero"><div><small>تعلیم • کتاب • ویډیو • استادان</small><h1>هره ورځ زده کړه، خپل راتلونکی جوړ کړه!</h1><p>د «زدکړیال» تعلیمي پلاتفورم</p><button class="primary" onclick="show('courses')">کورسونه وګوره</button></div><div class="heroicon">🎓<br><strong>زدکړیال</strong></div></div><h2>مشهورې برخې</h2><div class="grid"><div class="card">🩺 طب</div><div class="card">💻 کمپیوټر ساینس</div><div class="card">⚙️ انجینري</div><div class="card">⚖️ حقوق</div></div></section>
-<section id="courses" class="page"><h2>ویډیو کورسونه</h2><div class="filters"><input id="cfac" placeholder="Faculty ولیکه، لکه طب"><button onclick="loadCourses()">لټون</button></div><div id="coursesBox" class="grid"></div></section>
-<section id="books" class="page"><h2>کتابتون</h2><div id="booksBox" class="grid"></div></section>
-<section id="account" class="page"><h2>زما حساب</h2><div id="accountBox" class="card"></div></section>
-<section id="register" class="page"><h2>نوی حساب</h2><form id="reg" class="form"><input name="name" placeholder="بشپړ نوم" required><select name="role"><option value="student">محصل</option><option value="teacher">استاد</option></select><input name="email" placeholder="Email"><input name="phone" placeholder="موبایل"><input name="password" type="password" placeholder="Password" required><input name="university" placeholder="پوهنتون / اداره"><input name="faculty" placeholder="پوهنځی / مسلکي برخه" required><input name="department" placeholder="څانګه"><input name="semester" placeholder="Semester (محصل) "><textarea name="credentials" placeholder="د استاد لپاره: تحصیل، تجربه او مسلکي اسنادو لنډ معلومات"></textarea><button class="primary">Account جوړ کړه</button></form></section>
-<section id="login" class="page"><h2>Login</h2><form id="log" class="form"><input name="identifier" placeholder="Email یا موبایل" required><input name="password" type="password" placeholder="Password" required><button class="primary">Login</button></form></section>
-<section id="admin" class="page"><h2>Admin Panel</h2><div id="stats" class="grid"></div><div class="grid two"><div class="card"><h3>د محصلانو او استادانو تأیید</h3><div id="users"></div></div><div class="card"><h3>کورس اضافه کول</h3><form id="cfm" class="form"><input name="title" placeholder="کورس نوم" required><input name="faculty" placeholder="Faculty" required><input name="department" placeholder="Department"><input name="semester" type="number" min="1" placeholder="د کورس سمستر" required><input name="price" type="number" placeholder="قیمت AFN"><input name="teacher" placeholder="استاد"><input name="lessons" type="number" placeholder="د درسونو شمېر"><input name="videoUrl" placeholder="Video URL (وروسته) "><input name="bookUrl" placeholder="Book/PDF URL (وروسته)"><textarea name="description" placeholder="تشریح"></textarea><label><input name="downloadable" type="checkbox" checked> د اړوند Faculty لپاره Download</label><button class="primary">Save Course</button></form></div><div class="card"><h3>کتاب اضافه کول</h3><form id="bf" class="form"><input name="title" placeholder="کتاب نوم" required><input name="faculty" placeholder="Faculty" required><input name="department" placeholder="Department"><input name="semester" type="number" min="1" placeholder="د کتاب سمستر" required><input name="author" placeholder="لیکوال"><input name="pdfUrl" placeholder="PDF URL (وروسته)"><textarea name="description" placeholder="تشریح"></textarea><button class="primary">Save Book</button></form></div></div></section></main><footer>© 2026 زدکړیال</footer><script src="/app.js"></script></body></html>
+<!doctype html>
+<html lang="ps" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>زدکړیال | تعلیمي پلاتفورم</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#f5faf8;color:#17352d}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer}
+a{text-decoration:none;color:inherit;cursor:pointer}
+.top{height:74px;background:#fff;border-bottom:1px solid #e4eee9;display:flex;align-items:center;padding:0 5%;gap:25px;position:sticky;top:0;z-index:20}
+.brand{font-size:25px;font-weight:900;color:#087f5b;white-space:nowrap}
+.brand span{font-size:10px;margin-right:4px}
+.top nav{display:flex;gap:18px;flex:1}
+.top nav a{color:#50635d;font-size:14px;padding:27px 3px;border-bottom:3px solid transparent}
+.top nav a:hover{color:#087f5b;border-color:#087f5b}
+.actions{display:flex;gap:8px}
+.primary,.ghost,.outline,.danger{border:0;border-radius:10px;padding:10px 17px;font-weight:bold;cursor:pointer}
+.primary{background:#07865f;color:#fff}
+.ghost{background:#edf7f3;color:#087f5b}
+.outline{background:#fff;color:#087f5b;border:1px solid #b9d9cd}
+.danger{background:#fff0f0;color:#b42318}
+.big{padding:14px 25px}
+.page{display:none;min-height:500px}
+.page.active{display:block}
+.hero{max-width:1200px;margin:auto;padding:65px 5%;display:grid;grid-template-columns:1.3fr .8fr;gap:45px;align-items:center}
+.eyebrow{color:#07865f;font-size:13px;font-weight:bold;margin:0 0 10px}
+.hero h1{font-size:46px;line-height:1.3;margin:0 0 18px}
+.hero h1 b{color:#07865f}
+.lead{font-size:17px;line-height:2;color:#65756f;max-width:680px}
+.heroBtns{display:flex;gap:10px;margin-top:25px}
+.heroVisual{background:#087f5b;border-radius:25px;padding:14px;box-shadow:0 20px 50px #087f5b25}
+.heroVisual img{width:100%;height:310px;object-fit:cover;border-radius:18px;background:#dff3eb}
+.heroInfo{background:#ffffff;color:#17352d;border-radius:15px;padding:15px;margin-top:10px}
+.heroInfo b,.heroInfo span{display:block}
+.section{max-width:1200px;margin:auto;padding:50px 5%}
+.sectionHead{display:flex;justify-content:space-between;align-items:end;margin-bottom:25px}
+.sectionHead h2{margin:0;font-size:28px}
+.sectionHead>a{color:#07865f;font-weight:bold}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}
+.cards article,.courseCard,.bookCard,.liveCard,.panel{background:#fff;border:1px solid #e2eee8;border-radius:18px;padding:22px}
+.cards article:hover,.courseCard:hover,.bookCard:hover{box-shadow:0 10px 30px #17352d12;transform:translateY(-2px)}
+.cards i{font-style:normal;font-size:30px}
+.cards h3{margin:12px 0 7px}
+.muted{color:#71817b}
+.ad{max-width:1200px;margin:0 auto;padding:12px 5%;background:#eaf7f2;color:#087f5b;display:flex;justify-content:space-between}
+.facultyGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.faculty{background:#fff;border:1px solid #e2eee8;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:8px;cursor:pointer}
+.faculty:hover{border-color:#07865f}
+.facultyIcon{font-size:30px}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin-bottom:22px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #d7e5df;border-radius:10px;background:#fff;outline:none}
+input:focus,select:focus,textarea:focus{border-color:#07865f}
+textarea{min-height:100px;resize:vertical}
+.courseGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.bookGrid,.liveGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.tag{display:inline-block;padding:5px 9px;border-radius:20px;background:#edf7f3;color:#087f5b;font-size:12px;margin:2px}
+.tag.ok{background:#e8f7ed;color:#18753b}
+.tag.warn{background:#fff6dd;color:#8a6100}
+.progress{height:9px;background:#e2eee9;border-radius:20px;overflow:hidden;margin:10px 0}
+.progress i{display:block;height:100%;background:#07865f;border-radius:20px}
+.authWrap{max-width:850px;margin:45px auto;padding:0 5%}
+.authCard{background:#fff;border:1px solid #e1ece7;border-radius:22px;padding:30px;box-shadow:0 15px 45px #17352d0b}
+.authCard h2{margin-top:0}
+.form{display:grid;gap:12px}
+.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.checklist{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:12px 0}
+.check{padding:8px;border-radius:8px;background:#fff0f0;color:#9c2b22;font-size:13px}
+.check.done{background:#eaf8ef;color:#23713c}
+.hide{display:none!important}
+.successBox{background:#eaf8ef;color:#216c38;border-color:#bfe3ca}
+.dashboardWrap{max-width:1200px;margin:auto;padding:35px 5%}
+.dashCards,.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.dashCard,.stat{background:#fff;border:1px solid #e2eee8;border-radius:16px;padding:18px}
+.statNumber{display:block;font-size:21px;font-weight:bold;margin:8px 0}
+.adminGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.smartFilters{display:grid;gap:10px;margin-bottom:15px}
+.tableWrap{overflow:auto}
+.dataTable{width:100%;border-collapse:collapse;font-size:13px}
+.dataTable th,.dataTable td{padding:10px;border-bottom:1px solid #e8efec;text-align:right;white-space:nowrap}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.videoBox{background:#07130f;border-radius:18px;padding:10px}
+#videoEl{width:100%;max-height:650px}
+footer{margin-top:50px;background:#103f33;color:#dcece7;padding:28px 5%;display:flex;justify-content:space-between;gap:20px}
+.toast{position:fixed;bottom:20px;left:20px;z-index:100;background:#17352d;color:#fff;padding:13px 20px;border-radius:10px;display:none}
+.empty{padding:35px;text-align:center;background:#fff;border:1px dashed #cbded6;border-radius:15px;color:#72817c}
+@media(max-width:900px){
+.top nav{display:none}
+.hero{grid-template-columns:1fr}
+.grid,.courseGrid,.bookGrid,.liveGrid{grid-template-columns:repeat(2,1fr)}
+.facultyGrid{grid-template-columns:repeat(2,1fr)}
+.filters{grid-template-columns:1fr 1fr}
+.dashCards,.stats{grid-template-columns:1fr 1fr}
+.adminGrid{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+.top{height:65px;padding:0 4%}
+.actions .ghost{display:none}
+.hero,.section,.dashboardWrap{padding-left:4%;padding-right:4%}
+.hero h1{font-size:32px}
+.grid,.courseGrid,.bookGrid,.liveGrid,.facultyGrid,.filters,.formGrid,.two{grid-template-columns:1fr}
+.dashCards,.stats{grid-template-columns:1fr 1fr}
+footer{flex-direction:column}
+}
+</style>
+</head>
+
+<body>
+
+<header class="top">
+  <div class="brand">زدکړیال<span>●</span></div>
+
+  <nav>
+    <a onclick="show('home')">کور</a>
+    <a onclick="show('courses')">کورسونه</a>
+    <a onclick="show('books')">کتابتون</a>
+    <a onclick="show('semesters')">پوهنتون</a>
+    <a onclick="show('school')">مکتب</a>
+    <a onclick="show('live')">Live Classes</a>
+  </nav>
+
+  <div class="actions" id="actions">
+    <button class="ghost" onclick="show('login')">Login</button>
+    <button class="primary" onclick="show('register')">ثبت نام</button>
+  </div>
+</header>
+
+<div id="adStrip"></div>
+
+<!-- HOME -->
+<section id="home" class="page active">
+
+  <div class="hero">
+    <div>
+      <p class="eyebrow">تعلیم • کتاب • ویډیو • استادان</p>
+      <h1>هره ورځ زده کړه،<br><b>خپل راتلونکی جوړ کړه!</b></h1>
+
+      <p class="lead">
+        د «زدکړیال» تعلیمي پلاتفورم کې خپل مضمونونه،
+        ویډیو کورسونه، کتابونه، استادان او هوښیار
+        زده‌کړیز وسایل په یوه ځای کې ومومئ.
+      </p>
+
+      <div class="heroBtns">
+        <button class="primary big" onclick="show('courses')">کورسونه وګوره</button>
+        <button class="outline big" onclick="show('account')">زما زده‌کړه</button>
+      </div>
+    </div>
+
+    <div class="heroVisual">
+      <img id="heroPhoto" src="/hero-banner.png" alt="زدکړیال">
+      <div id="heroInfo" class="heroInfo">
+        <b>د زده کړې پیل</b>
+        <span>خپل حساب جوړ کړئ</span>
+      </div>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="sectionHead">
+      <div>
+        <p class="eyebrow">اکاډمیک جوړښت</p>
+        <h2>خپل پوهنځی انتخاب کړئ</h2>
+      </div>
+    </div>
+    <div id="facultyGrid" class="facultyGrid"></div>
+  </section>
+
+  <section class="section">
+    <div class="sectionHead">
+      <div>
+        <p class="eyebrow">ستاسې لپاره</p>
+        <h2>مشهور کورسونه</h2>
+      </div>
+      <a onclick="show('courses')">ټول کورسونه →</a>
+    </div>
+    <div id="popular" class="grid"></div>
+  </section>
+
+  <section class="section">
+    <div class="sectionHead">
+      <div>
+        <p class="eyebrow">د زده‌کړې وسایل</p>
+        <h2>هوښیار زده‌کړه</h2>
+      </div>
+    </div>
+
+    <div class="grid cards">
+      <article><i>🎥</i><h3>ویډیو کورسونه</h3><p>مرحله‌وار ویډیو درسونه او کورسونه.</p></article>
+      <article onclick="show('qbank')" style="cursor:pointer"><i>🧠</i><h3>QBank</h3><p>MCQ، True/False او کلینیکي پوښتنې.</p></article>
+      <article onclick="show('clinicalCases')" style="cursor:pointer"><i>🩺</i><h3>Clinical Cases</h3><p>History، Examination، Diagnosis او Treatment.</p></article>
+      <article><i>📚</i><h3>کتابتون</h3><p>کتابونه او د مضمون اړوند منابع.</p></article>
+      <article><i>🃏</i><h3>Flashcards</h3><p>Spaced Repetition سره هوښیار مرور.</p></article>
+      <article><i>🤖</i><h3>AI Tutor</h3><p>ساده او پرمختللې تشریح او تمرین.</p></article>
+    </div>
+  </section>
+
+</section>
+
+<!-- COURSES -->
+<section id="courses" class="page">
+  <div class="section">
+    <div class="sectionHead">
+      <div>
+        <p class="eyebrow">تعلیمي محتوا</p>
+        <h2>ویډیو کورسونه</h2>
+      </div>
+    </div>
+
+    <div class="filters">
+      <input id="search" placeholder="کورس، مضمون یا موضوع ولټوئ..." oninput="loadCourses()">
+      <select id="cfac" onchange="loadCourses()"></select>
+      <select id="csem" onchange="loadCourses()"></select>
+      <select id="ctype" onchange="loadCourses()">
+        <option value="">ټول کورسونه</option>
+        <option value="paid">Paid</option>
+        <option value="free">Free</option>
+      </select>
+    </div>
+
+    <div id="coursesBox" class="grid"></div>
+  </div>
+</section>
+
+<!-- QBANK -->
+<section id="qbank" class="page">
+  <div class="section">
+    <div class="sectionHead">
+      <div>
+        <p class="eyebrow">Smart Learning</p>
+        <h2>🧠 QBank</h2>
+        <p class="muted">MCQ، True/False او Clinical Questions</p>
+      </div>
+    </div>
+
+    <div class="grid cards">
+      <article>
+        <i>📝</i>
+        <h3>MCQ</h3>
+        <p>څو انتخابي پوښتنې او تشریحي ځوابونه.</p>
+        <button class="primary" onclick="toast('MCQ برخه به فعاله شي')">پیل</button>
+      </article>
+
+      <article>
+        <i>✓</i>
+        <h3>True / False</h3>
+        <p>د موضوعاتو لپاره True او False پوښتنې.</p>
+        <button class="primary" onclick="toast('True / False برخه به فعاله شي')">پیل</button>
+      </article>
+
+      <article>
+        <i>🩺</i>
+        <h3>Clinical Cases</h3>
+        <p>History، Examination، Diagnosis او Treatment.</p>
+        <button class="primary" onclick="show('clinicalCases')">پیل</button>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKS -->
+<section id="books" class="page">
+  <div class="section">
+    <div class="sectionHead">
+      <div>
+        <p class="eyebrow">Library</p>
+        <h2>کتابتون</h2>
+      </div>
+    </div>
+
+    <div class="filters">
+      <input id="bookSearch" placeholder="کتاب ولټوئ..." oninput="loadBooks()">
+      <select id="bfilt" onchange="loadBooks()"></select>
+      <select id="bsem" onchange="loadBooks()"></select>
+      <div></div>
+    </div>
+
+    <div id="booksBox" class="bookGrid"></div>
+  </div>
+</section>
+
+<!-- LIVE -->
+<section id="live" class="page">
+  <div class="section">
+    <div class="sectionHead">
+      <div>
+        <p class="eyebrow">Live Learning</p>
+        <h2>ژوندۍ ټولګي</h2>
+      </div>
+    </div>
+    <div id="liveBox" class="liveGrid"></div>
+  </div>
+</section>
+
+<!-- SEMESTERS -->
+<section id="semesters" class="page">
+  <div class="section">
+    <div class="sectionHead">
+      <div>
+        <p class="eyebrow">University Learning</p>
+        <h2>🎓 پوهنتون</h2>
+        <p class="muted">خپل اصلي تخصص انتخاب کړئ او اړوند پوهنځي، رشتې، سمسترونه، کورسونه او کتابونه ومومئ.</p>
+      </div>
+    </div>
+
+    <div id="academicGroups" class="grid" style="margin-top:22px"></div>
+
+    <div id="universityArea" style="display:none;margin-top:24px">
+      <div id="universityTitle" class="panel"></div>
+      <div id="universityFaculties" class="grid" style="margin-top:18px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- PLAYER -->
+<section id="player" class="page">
+  <div class="section">
+    <button class="outline" onclick="show('courses')">← کورسونو ته ستنېدل</button>
+    <div id="playerBox" style="margin-top:18px"></div>
+  </div>
+</section>
+
+<!-- CLINICAL CASES -->
+<section id="clinicalCases" class="page">
+  <div class="dashboardWrap">
+    <div class="sectionHead">
+      <div>
+        <p class="eyebrow">Clinical Learning</p>
+        <h2>🩺 Clinical Cases</h2>
+        <p class="muted">History، Examination، Diagnosis او Treatment</p>
+      </div>
+    </div>
+
+    <div class="adminGrid">
+      <div class="panel">
+        <h3>🫀 Case 01 — Acute Chest Pain</h3>
+        <p><b>History:</b> یو ۵۵ کلن ناروغ د ناڅاپي شدید Chest Pain سره مراجعه کوي.</p>
+        <p><b>Examination:</b> BP 150/90 mmHg، Pulse 96/min.</p>
+        <button class="primary" onclick="toast('Case details به په راتلونکي مرحله کې پرانیستل شي')">Case پرانیزه</button>
+      </div>
+
+      <div class="panel">
+        <h3>🫁 Case 02 — Shortness of Breath</h3>
+        <p><b>History:</b> ناروغ د ساه لنډۍ او ټوخې له شکایت سره مراجعه کوي.</p>
+        <p><b>Examination:</b> د تنفسي سیستم معاینه ترسره شوه.</p>
+        <button class="primary" onclick="toast('Case details به په راتلونکي مرحله کې پرانیستل شي')">Case پرانیزه</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>📋 Clinical Case Structure</h3>
+      <div class="adminGrid">
+        <div>
+          <p>1️⃣ History</p>
+          <p>2️⃣ Physical Examination</p>
+          <p>3️⃣ Differential Diagnosis</p>
+        </div>
+        <div>
+          <p>4️⃣ Investigations</p>
+          <p>5️⃣ Final Diagnosis</p>
+          <p>6️⃣ Treatment & Management</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOGIN -->
+<section id="login" class="page">
+  <div class="authWrap">
+    <div class="authCard">
+      <p class="eyebrow">Account</p>
+      <h2>خپل حساب ته Login وکړئ</h2>
+
+      <form id="log" class="form">
+        <input name="identifier" placeholder="موبایل شمېره یا Email" required>
+        <input name="password" type="password" placeholder="Password" required>
+        <button class="primary">Login</button>
+      </form>
+
+
+
+      <div class="panel" style="margin-top:15px">
+        <h3>🔑 Password هېر شوی؟</h3>
+        <form id="forgotRequest" class="form">
+          <input name="phone" id="forgotPhone" placeholder="موبایل شمېره" required>
+          <button class="outline" type="submit">د تایید کوډ وغواړئ</button>
+        </form>
+
+        <form id="forgotReset" class="form hide" style="margin-top:10px">
+          <input name="identifier" placeholder="موبایل یا Email" required>
+          <input name="newPassword" type="password" placeholder="نوی Password" required>
+          <input name="newPassword2" type="password" placeholder="نوی Password بیا ولیکئ" required>
+          <button class="primary" type="submit">Password بدل کړئ</button>
+        </form>
+      </div>
+
+      <p class="muted">
+        حساب نه لرئ؟
+        <a onclick="show('register')" style="color:#07865f;font-weight:bold">ثبت نام وکړئ</a>
+      </p>
+
+      <div id="loginNotice" class="panel hide"></div><div id="loginResult"></div>
+    </div>
+  </div>
+</section>
+
+<!-- REGISTER -->
+<section id="register" class="page">
+  <div class="authWrap">
+    <div class="authCard">
+      <p class="eyebrow">Student Registration</p>
+      <h2>نوی محصل حساب جوړ کړئ</h2>
+
+      <form id="reg" class="form">
+
+  <div class="formGroup">
+    <label>بشپړ نوم</label>
+    <input name="name" placeholder="خپل بشپړ نوم ولیکئ" required>
+  </div>
+
+  <div class="formGroup">
+    <label>Email</label>
+    <input name="email" type="email" placeholder="Email">
+  </div>
+
+  <div class="formGroup">
+    <label>موبایل شمېره</label>
+    <div class="phoneRow">
+      <select name="countryCode" id="countryCode">
+        <option value="+93">🇦🇫 افغانستان (+93)</option>
+        <option value="+92">🇵🇰 پاکستان (+92)</option>
+        <option value="+98">🇮🇷 ایران (+98)</option>
+        <option value="+1">🇺🇸 امریکا (+1)</option>
+        <option value="+44">🇬🇧 بریتانیا (+44)</option>
+        <option value="+49">🇩🇪 جرمني (+49)</option>
+        <option value="+91">🇮🇳 هند (+91)</option>
+        <option value="+971">🇦🇪 امارات (+971)</option>
+      </select>
+      <input name="phone" id="regPhone" inputmode="numeric"
+             placeholder="0700000000" required>
+    </div>
+  </div>
+
+  <div class="formGrid">
+
+    <div class="formGroup">
+      <label>پوهنتون</label>
+      <select name="university" id="runiv" required><option value="">خپل پوهنتون انتخاب کړئ</option></select>
+    </div>
+
+    <div class="formGroup">
+      <label>پوهنځی</label>
+      <select name="faculty" id="rfac" required>
+        <option value="">پوهنځی انتخاب کړئ</option>
+      </select>
+    </div>
+
+  </div>
+
+  <div class="formGrid">
+
+    <div class="formGroup">
+      <label>رشته</label>
+      <select name="department" id="rdep" required>
+        <option value="">رشته انتخاب کړئ</option>
+      </select>
+    </div>
+
+    <div class="formGroup">
+      <label>سمستر</label>
+      <select name="semester" id="rsem" required>
+        <option value="">سمستر انتخاب کړئ</option>
+      </select>
+    </div>
+
+  </div>
+
+  <div class="formGroup">
+    <label>تحصیلي کال</label>
+    <select name="academicYear" id="ray" required>
+      <option value="">تحصیلي کال انتخاب کړئ</option>
+    </select>
+  </div>
+
+  <div class="formGrid">
+
+    <div class="formGroup">
+      <label>Password</label>
+      <input name="password" type="password"
+             placeholder="Password" required>
+    </div>
+
+    <div class="formGroup">
+      <label>Password بیا ولیکئ</label>
+      <input name="passwordConfirm" type="password"
+             placeholder="Password بیا ولیکئ" required>
+    </div>
+
+  </div>
+
+  <label class="termsLabel">
+    <input name="acceptTerms" type="checkbox" value="true" style="width:auto">
+    شرایط او قوانین منم
+  </label>
+
+  <div id="regChecklist" class="checklist"></div>
+
+  <button class="primary" type="submit">ثبت نام</button>
+
+</form>
+
+      <div id="regResult"></div>
+
+      <div id="otpBox" class="panel hide" style="margin-top:15px">
+        <h3>📱 د موبایل تایید</h3>
+        <form id="otpForm" class="form">
+          <input id="otpPhone" name="phone" readonly>
+          <input id="otpCode" name="code" placeholder="OTP Code" required>
+          <button class="primary" type="submit">تایید</button>
+          <button class="outline" type="button" onclick="resendOtp()">OTP بیا واستوه</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STUDENT -->
+<section id="account" class="page">
+  <div class="dashboardWrap">
+    <div class="sectionHead">
+      <div>
+        <p class="eyebrow">Student Dashboard</p>
+        <h2>زما حساب</h2>
+      </div>
+      <button class="outline" onclick="logout()">وتل</button>
+    </div>
+    <div id="studentDash"></div>
+  </div>
+</section>
+
+<!-- TEACHER -->
+<section id="teacher" class="page">
+  <div class="dashboardWrap">
+    <div class="sectionHead">
+      <div>
+        <p class="eyebrow">Teacher Workspace</p>
+        <h2>د استاد مرکز</h2>
+      </div>
+    </div>
+    <div id="teacherDash"></div>
+  </div>
+</section>
+
+<!-- ADMIN -->
+<section id="admin" class="page">
+  <div class="dashboardWrap">
+    <div class="sectionHead">
+      <div>
+        <p class="eyebrow">Administration</p>
+        <h2>Admin Panel</h2>
+      </div>
+    </div>
+    <div id="adminDash"></div>
+  </div>
+</section>
+
+<!-- SUPER ADMIN -->
+<section id="superadmin" class="page">
+  <div class="dashboardWrap">
+    <div class="sectionHead">
+      <div>
+        <p class="eyebrow">System Control</p>
+        <h2>Super Admin</h2>
+      </div>
+    </div>
+    <div id="superAdminDash"></div>
+  </div>
+</section>
+
+<div id="toast" class="toast"></div>
+
+<footer>
+  <strong>زدکړیال</strong>
+  <span>تعلیم • کتاب • ویډیو • استادان</span>
+  <span>© 2026 زدکړیال</span>
+</footer>
+
+<script src="/academic-data.js"></script>
+<script src="/app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,542 @@
+{
+  "users": [
+    {
+      "id": "superadmin-1",
+      "name": "Super Admin",
+      "email": "admin@zdakrhyal.local",
+      "password": "3eb3fe66b31e3b4d10fa70b5cad49c7112294af6ae4e476a1c405155d45aa121",
+      "role": "superadmin",
+      "status": "verified",
+      "university": "",
+      "faculty": "",
+      "department": "",
+      "semester": 1,
+      "notifications": [],
+      "activeSession": null,
+      "permissions": []
+    },
+    {
+      "id": "a-32dbe3a6762566ffbd5723efa995ac781c2b0fe79df6f803",
+      "adminCode": "ADM-CU6XE6",
+      "name": "ghamjanarman",
+      "email": "ghamjanarman@gmail.com",
+      "phone": "",
+      "password": "ec1b77ad141cf0a20fc4db4d4a271772bdc54e80c4b8a1413b5efb2075ad0a83",
+      "role": "admin",
+      "status": "verified",
+      "permissions": [
+        "users",
+        "courses",
+        "content",
+        "payments",
+        "ads"
+      ],
+      "university": "",
+      "faculty": "",
+      "department": "",
+      "semester": "",
+      "createdAt": "2026-09-16T08:48:12.003Z",
+      "notifications": [],
+      "activeSession": null
+    },
+    {
+      "id": "u-f28be9cfe4b1b84dc8c33e9b0d0353d929996de68f9f0f74",
+      "name": "niaz mohammad",
+      "email": "ghamjamarma@gmail.com",
+      "phone": "748043743",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "role": "student",
+      "status": "verified",
+      "phoneVerified": true,
+      "university": "کابل",
+      "faculty": "طب",
+      "department": "طب",
+      "semester": "9",
+      "academicYear": "1405",
+      "studentCode": "ZD-AP727L",
+      "createdAt": "2026-09-16T09:30:35.456Z",
+      "notifications": [
+        {
+          "id": "n-d85315cb51392cb316bb05bce549fbfbca8836f95c07f222",
+          "title": "Account تأیید شو",
+          "message": "ستاسې حساب د زدکړیال Admin له خوا تأیید شو.",
+          "read": false,
+          "createdAt": "2026-09-16T10:22:11.560Z"
+        }
+      ],
+      "activeSession": null,
+      "termsAcceptedAt": "2026-09-16T09:30:35.456Z",
+      "registrationComplete": true,
+      "phoneOtpHash": "",
+      "phoneOtpExpiresAt": "",
+      "phoneOtpAttempts": 0,
+      "permissions": []
+    },
+    {
+      "id": "u-8c1aae27f2a31a37164b02fcf7b10d9bf12c0f033fce71b3",
+      "name": "niaz mohammad",
+      "email": "nusafzay@gmail.com",
+      "phone": "0764564931",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "role": "student",
+      "status": "verified",
+      "phoneVerified": true,
+      "university": "kabul",
+      "faculty": "طب",
+      "department": "رواني طب",
+      "semester": "2",
+      "academicYear": "1405",
+      "studentCode": "ZD-RAS5G4",
+      "createdAt": "2026-09-16T10:05:10.702Z",
+      "notifications": [
+        {
+          "id": "n-1f7c313031b55bdcd9e992a54553a1180028ea03757dfda6",
+          "title": "Account تأیید شو",
+          "message": "ستاسې حساب د زدکړیال Admin له خوا تأیید شو.",
+          "read": false,
+          "createdAt": "2026-09-16T10:20:36.564Z"
+        },
+        {
+          "id": "n-3daebab2fad6898bd382efdce182c987319e2f988b0349dd",
+          "title": "Account تأیید شو",
+          "message": "ستاسې حساب د زدکړیال Admin له خوا تأیید شو.",
+          "read": false,
+          "createdAt": "2026-09-16T10:20:07.261Z"
+        },
+        {
+          "id": "n-4a71da12d6e6ffee39ad3af93e2970484b17e768edbc1967",
+          "title": "Account تأیید شو",
+          "message": "ستاسې حساب د زدکړیال Admin له خوا تأیید شو.",
+          "read": false,
+          "createdAt": "2026-09-16T10:20:02.233Z"
+        }
+      ],
+      "activeSession": null,
+      "termsAcceptedAt": "2026-09-16T10:05:10.702Z",
+      "registrationComplete": true,
+      "phoneOtpHash": "",
+      "phoneOtpExpiresAt": "",
+      "phoneOtpAttempts": 0,
+      "permissions": []
+    },
+    {
+      "id": "t-ce98cc8ebf5802e1ac6dc9b64880aea81dbdd39405c43868",
+      "teacherCode": "TCH-L2HYUP",
+      "name": "Test Teacher",
+      "email": "testteacher@zdakrhyal.local",
+      "phone": "",
+      "password": "3641c3aac9354aa4b8ac3b3677d7b1a358c535aaafe160ce0821c8f89baa7f03",
+      "role": "teacher",
+      "status": "verified",
+      "permissions": [],
+      "university": "طبي پوهنتون",
+      "faculty": "طب",
+      "department": "عمومي طب",
+      "semester": "",
+      "academicYear": "",
+      "credentials": "Test credentials",
+      "createdAt": "2026-09-18T12:36:22.150Z",
+      "notifications": [],
+      "activeSession": {
+        "id": "5205531467ed3775bc28aae9f1ebd0717654d92eb3d84b4d",
+        "deviceId": "",
+        "createdAt": "2026-09-18T12:37:20.833Z",
+        "expiresAt": "2026-10-18T12:37:20.833Z"
+      }
+    }
+  ],
+  "courses": [
+    {
+      "id": "c-fea764385b5612c130859eab58160e7ff87a31ebcf01b5a0",
+      "title": "Test Physiology Course",
+      "description": "Test course for Admin Review",
+      "price": 0,
+      "teacher": "Test Teacher",
+      "teacherId": "t-ce98cc8ebf5802e1ac6dc9b64880aea81dbdd39405c43868",
+      "university": "طبي پوهنتون",
+      "faculty": "طب",
+      "department": "عمومي طب",
+      "semester": "",
+      "academicYear": "",
+      "status": "review",
+      "approvalStatus": "pending",
+      "videos": [],
+      "createdAt": "2026-09-18T12:38:07.756Z",
+      "studentsCount": 0,
+      "progress": {}
+    },
+    {
+      "id": "c-e23dd055b1f8f286bc4401b482a2a7e905f67a799a5787ef",
+      "title": "IT information ",
+      "teacher": "Zalgai",
+      "faculty": "کمپیوټر ساینس",
+      "department": "",
+      "semester": "1",
+      "academicYear": "1405",
+      "price": 1500,
+      "description": "د ای ټی انفارمیشن مکمل تشریح",
+      "downloadable": false,
+      "videos": [],
+      "createdAt": "2026-09-17T07:27:52.786Z",
+      "studentsCount": 0
+    },
+    {
+      "id": "course-1",
+      "title": "د طب مقدماتي کورس",
+      "faculty": "طب",
+      "semester": 1,
+      "teacher": "زدکړیال",
+      "price": 0,
+      "description": "د طب د بنسټیزو موضوعاتو مقدماتي کورس.",
+      "videos": [],
+      "studentsCount": 0
+    }
+  ],
+  "books": [],
+  "ads": [],
+  "notifications": [],
+  "purchases": [],
+  "wishlist": [],
+  "sessions": [
+    {
+      "token": "359944608af9305f3252f96c9b00035229e1db87d4f086809dbdd182364686ed",
+      "userId": "superadmin-1",
+      "deviceId": "5e929086-681d-4ef3-9086-08c88da273a6",
+      "createdAt": "2026-09-15T15:45:33.923Z"
+    }
+  ],
+  "auditLogs": [
+    {
+      "id": "audit-d95416fdd92b7c36f50a4907e8e3fa778c8d8f4862f57783",
+      "userId": "t-ce98cc8ebf5802e1ac6dc9b64880aea81dbdd39405c43868",
+      "userName": "Test Teacher",
+      "action": "course.submit",
+      "details": "Test Physiology Course",
+      "createdAt": "2026-09-18T12:38:07.756Z"
+    },
+    {
+      "id": "audit-11c280c8f94ac4fd28e91b7a9ff036c7b5d613f22d333c3f",
+      "userId": "a-32dbe3a6762566ffbd5723efa995ac781c2b0fe79df6f803",
+      "userName": "ghamjanarman",
+      "action": "academic.subject.create",
+      "details": "اناتومی",
+      "createdAt": "2026-09-17T07:26:11.713Z"
+    }
+  ],
+  "wishlists": [],
+  "certificates": [],
+  "settings": {
+    "platformName": "زدکړیال",
+    "defaultLanguage": "ps",
+    "maintenance": false
+  },
+  "universities": [
+    "کابل پوهنتون",
+    "کابل طبي پوهنتون",
+    "هرات پوهنتون",
+    "ننګرهار پوهنتون",
+    "بلخ پوهنتون",
+    "کندهار پوهنتون",
+    "پوهنتون های خصوصی",
+    "نور"
+  ],
+  "faculties": [
+    "طب",
+    "ستوماتولوژي",
+    "فارمسي",
+    "نرسنګ",
+    "عامه روغتیا",
+    "انجنیري",
+    "کمپیوټر ساینس",
+    "اقتصاد",
+    "حقوق او سیاسي علوم",
+    "اداره او عامه پالیسي",
+    "ښوونه او روزنه",
+    "کرنه",
+    "وترنري علوم",
+    "ساینس",
+    "جیولوجي او کانونه",
+    "ژورنالیزم او رسنۍ",
+    "ژبې او ادبیات",
+    "شرعیات",
+    "ټولنیز علوم",
+    "چاپېریال او طبیعي سرچینې",
+    "هنرونه",
+    "بدني روزنه",
+    "کتابتون او معلوماتي علوم",
+    "مخابرات او معلوماتي ټکنالوژي",
+    "نور",
+    "niazmohammad",
+    "niazmohammad"
+  ],
+  "departments": [
+    {
+      "faculty": "طب",
+      "name": "عمومي طب"
+    },
+    {
+      "faculty": "ستوماتولوژي",
+      "name": "ستوماتولوژي"
+    },
+    {
+      "faculty": "فارمسي",
+      "name": "فارمسي"
+    },
+    {
+      "faculty": "نرسنګ",
+      "name": "نرسنګ"
+    },
+    {
+      "faculty": "کمپیوټر ساینس",
+      "name": "Computer Science"
+    },
+    {
+      "faculty": "کمپیوټر ساینس",
+      "name": "Software Engineering"
+    },
+    {
+      "faculty": "کمپیوټر ساینس",
+      "name": "Information Technology"
+    },
+    {
+      "faculty": "انجنیري",
+      "name": "سیول انجنیري"
+    },
+    {
+      "faculty": "انجنیري",
+      "name": "برېښنا انجنیري"
+    },
+    {
+      "faculty": "حقوق او سیاسي علوم",
+      "name": "حقوق"
+    }
+  ],
+  "academicYears": [
+    "1404",
+    "1405",
+    "1406"
+  ],
+  "semesters": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11"
+  ],
+  "facultySemesters": {
+    "طب": 11,
+    "ستوماتولوژي": 10,
+    "فارمسي": 10,
+    "نرسنګ": 8,
+    "عامه روغتیا": 8,
+    "انجنیري": 9,
+    "کمپیوټر ساینس": 8,
+    "اقتصاد": 8,
+    "حقوق او سیاسي علوم": 8,
+    "اداره او عامه پالیسي": 8,
+    "ښوونه او روزنه": 8,
+    "کرنه": 8,
+    "وترنري علوم": 10,
+    "ساینس": 8,
+    "جیولوجي او کانونه": 8,
+    "ژورنالیزم او رسنۍ": 8,
+    "ژبې او ادبیات": 8,
+    "شرعیات": 8,
+    "ټولنیز علوم": 8,
+    "چاپېریال او طبیعي سرچینې": 8,
+    "هنرونه": 8,
+    "بدني روزنه او سپورت": 8,
+    "کتابتون او معلوماتي علوم": 8,
+    "مخابرات او معلوماتي ټکنالوژي": 8,
+    "نور": 8
+  },
+  "subjects": [
+    {
+      "id": "sub-3e5b5b7b7a2ade0640ee4e4a41edd29f95c78bff77193686",
+      "code": "Uper Limb Anatomy",
+      "name": "اناتومی",
+      "faculty": "طب",
+      "department": "عمومي طب",
+      "program": "",
+      "semester": "2",
+      "credits": 4,
+      "hours": 2,
+      "type": "elective",
+      "prerequisites": [],
+      "learningOutcomes": [],
+      "active": true,
+      "createdAt": "2026-09-17T07:26:11.713Z"
+    }
+  ],
+  "orders": [],
+  "liveClasses": [],
+  "supportTickets": [],
+  "site": {
+    "heroImage": "",
+    "gallery": [],
+    "posts": []
+  },
+  "programs": [],
+  "transcriptRecords": [],
+  "attendance": [],
+  "gradingScales": [
+    {
+      "id": "afg-standard",
+      "name": "Afghanistan Standard",
+      "scale": [
+        {
+          "grade": "A",
+          "min": 90,
+          "max": 100,
+          "point": 4
+        },
+        {
+          "grade": "B",
+          "min": 80,
+          "max": 89.99,
+          "point": 3
+        },
+        {
+          "grade": "C",
+          "min": 70,
+          "max": 79.99,
+          "point": 2
+        },
+        {
+          "grade": "D",
+          "min": 60,
+          "max": 69.99,
+          "point": 1
+        },
+        {
+          "grade": "F",
+          "min": 0,
+          "max": 59.99,
+          "point": 0
+        }
+      ]
+    }
+  ],
+  "policies": [
+    {
+      "id": "academic-integrity",
+      "title": "Academic Integrity",
+      "summary": "د امتحان، تکلیف او علمي کار اصول رعایت کړئ."
+    },
+    {
+      "id": "privacy",
+      "title": "Privacy & Data Protection",
+      "summary": "د محصل شخصي معلومات باید د قانوني او تعلیمي اړتیا له مخې وکارول شي."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "summary": "د زده‌کړې محتوا باید د امکان تر حده د لاسرسي معیارونه مراعات کړي."
+    }
+  ],
+  "academicGroups": [
+    {
+      "id": "medical",
+      "name": "طبي پوهنتون",
+      "faculties": [
+        "طب",
+        "ستوماتولوژي",
+        "فارمسي",
+        "نرسنګ",
+        "عامه روغتیا",
+        "وترنري علوم"
+      ],
+      "features": [
+        "qbank",
+        "clinicalCases"
+      ]
+    },
+    {
+      "id": "engineering",
+      "name": "انجنیري پوهنتون",
+      "faculties": [
+        "انجنیري"
+      ]
+    },
+    {
+      "id": "computer",
+      "name": "کمپیوټر ساینس پوهنتون",
+      "faculties": [
+        "کمپیوټر ساینس",
+        "مخابرات او معلوماتي ټکنالوژي"
+      ]
+    },
+    {
+      "id": "economics",
+      "name": "اقتصاد او مدیریت پوهنتون",
+      "faculties": [
+        "اقتصاد",
+        "اداره او عامه پالیسي"
+      ]
+    },
+    {
+      "id": "law",
+      "name": "حقوق او سیاسي علوم پوهنتون",
+      "faculties": [
+        "حقوق او سیاسي علوم",
+        "شرعیات"
+      ]
+    },
+    {
+      "id": "education",
+      "name": "ښوونې او روزنې پوهنتون",
+      "faculties": [
+        "ښوونه او روزنه"
+      ]
+    },
+    {
+      "id": "agriculture",
+      "name": "کرنې پوهنتون",
+      "faculties": [
+        "کرنه"
+      ]
+    },
+    {
+      "id": "science",
+      "name": "ساینس پوهنتون",
+      "faculties": [
+        "ساینس",
+        "جیولوجي او کانونه",
+        "چاپېریال او طبیعي سرچینې"
+      ]
+    },
+    {
+      "id": "social",
+      "name": "ټولنیزو علومو پوهنتون",
+      "faculties": [
+        "ژورنالیزم او رسنۍ",
+        "ژبې او ادبیات",
+        "ټولنیز علوم"
+      ]
+    },
+    {
+      "id": "arts",
+      "name": "هنرونو او سپورت پوهنتون",
+      "faculties": [
+        "هنرونه",
+        "بدني روزنه",
+        "کتابتون او معلوماتي علوم"
+      ]
+    },
+    {
+      "id": "other",
+      "name": "نور تخصصونه",
+      "faculties": [
+        "نور"
+      ],
+      "features": []
+    }
+  ],
+  "mcqs": []
+}

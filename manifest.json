@@ -1,1 +1,11 @@
-{"name":"زدکړیال","short_name":"زدکړیال","start_url":"/","display":"standalone","theme_color":"#102a43","background_color":"#f4f7fb","lang":"ps","dir":"rtl"}
+{
+  "name": "زدکړیال",
+  "short_name": "زدکړیال",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#102a43",
+  "lang": "ps",
+  "dir": "rtl",
+  "description": "د زده کړې، کتابونو، کورسونو او ویډیو درسونو تعلیمي پلاتفورم"
+}

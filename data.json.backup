@@ -1,0 +1,352 @@
+{
+  "users": [
+    {
+      "id": "superadmin-1",
+      "name": "Super Admin",
+      "email": "admin@zdakrhyal.local",
+      "password": "3eb3fe66b31e3b4d10fa70b5cad49c7112294af6ae4e476a1c405155d45aa121",
+      "role": "superadmin",
+      "status": "verified",
+      "university": "",
+      "faculty": "",
+      "department": "",
+      "semester": 1,
+      "notifications": [],
+      "activeSession": null,
+      "permissions": []
+    },
+    {
+      "id": "u-bb4533b868f125a30a6d85b326a548a10593e9c511370a13",
+      "name": "niaz mohammad",
+      "email": "nusafzay@gmail.com",
+      "phone": "0764564931",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "role": "student",
+      "status": "pending",
+      "phoneVerified": false,
+      "university": "کابل",
+      "faculty": "طب",
+      "department": "عمومي طب",
+      "semester": "5",
+      "academicYear": "1405",
+      "studentCode": "ZD-1QXAXT",
+      "createdAt": "2026-09-16T07:59:19.127Z",
+      "notifications": [],
+      "activeSession": null,
+      "termsAcceptedAt": "2026-09-16T07:59:19.127Z",
+      "registrationComplete": false,
+      "phoneOtpHash": "8f63c08ec654733593de8bf9a0c7d5541e089ff90d734690a407daa922f2ab05",
+      "phoneOtpExpiresAt": "2026-09-16T08:13:24.637Z",
+      "phoneOtpAttempts": 0,
+      "phoneOtpLastSentAt": "2026-09-16T08:03:24.637Z",
+      "permissions": []
+    },
+    {
+      "id": "u-b1a8ffc215f976273038b023d0f5a62678b8504e72879e33",
+      "name": "niaz mohammad",
+      "email": "ghamjanarmann@gmail.com",
+      "phone": "764564931",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "role": "student",
+      "status": "pending",
+      "phoneVerified": false,
+      "university": "کابل",
+      "faculty": "طب",
+      "department": "عمومي طب",
+      "semester": "8",
+      "academicYear": "1405",
+      "studentCode": "ZD-ZAISQ1",
+      "createdAt": "2026-09-16T08:05:00.294Z",
+      "notifications": [],
+      "activeSession": null,
+      "termsAcceptedAt": "2026-09-16T08:05:00.294Z",
+      "registrationComplete": false,
+      "phoneOtpHash": "265bc0c55a58025f66c2aa2e63031002ba6d798bfbb7f89187a47534d32040cb",
+      "phoneOtpExpiresAt": "2026-09-16T08:15:00.294Z",
+      "phoneOtpAttempts": 0,
+      "phoneOtpLastSentAt": "2026-09-16T08:05:00.294Z",
+      "permissions": []
+    },
+    {
+      "id": "a-32dbe3a6762566ffbd5723efa995ac781c2b0fe79df6f803",
+      "adminCode": "ADM-CU6XE6",
+      "name": "ghamjanarman",
+      "email": "ghamjanarman@gmail.com",
+      "phone": "",
+      "password": "ec1b77ad141cf0a20fc4db4d4a271772bdc54e80c4b8a1413b5efb2075ad0a83",
+      "role": "admin",
+      "status": "verified",
+      "permissions": [
+        "users",
+        "courses",
+        "content",
+        "payments",
+        "ads"
+      ],
+      "university": "",
+      "faculty": "",
+      "department": "",
+      "semester": "",
+      "createdAt": "2026-09-16T08:48:12.003Z",
+      "notifications": [],
+      "activeSession": {
+        "id": "45da86391d4a1776fa360b453a5c6507499e3f9549a34b4d",
+        "deviceId": "abff4812-ee7c-4598-b9c8-9b51da4b5f6a",
+        "createdAt": "2026-09-16T09:12:00.732Z",
+        "expiresAt": "2026-10-16T09:12:00.732Z"
+      }
+    },
+    {
+      "id": "u-d33dce5680dd6236daf9bd598ed6efcbcdefc8c25bb2fd19",
+      "name": "niaz mohammad",
+      "email": "ghamjamarmann@gmail.com",
+      "phone": "792538017",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "role": "student",
+      "status": "pending",
+      "phoneVerified": false,
+      "university": "کابل",
+      "faculty": "طب",
+      "department": "اطفال",
+      "semester": "8",
+      "academicYear": "1405",
+      "studentCode": "ZD-3N13AE",
+      "createdAt": "2026-09-16T09:15:55.517Z",
+      "notifications": [],
+      "activeSession": null,
+      "termsAcceptedAt": "2026-09-16T09:15:55.517Z",
+      "registrationComplete": false,
+      "phoneOtpHash": "0a2030672b4464beca7cee5a7a45f3f09d738975fe90b24f7d3bd11890961ae2",
+      "phoneOtpExpiresAt": "2026-09-16T09:25:55.517Z",
+      "phoneOtpAttempts": 0,
+      "phoneOtpLastSentAt": "2026-09-16T09:15:55.517Z"
+    }
+  ],
+  "courses": [
+    {
+      "id": "course-1",
+      "title": "د طب مقدماتي کورس",
+      "faculty": "طب",
+      "semester": 1,
+      "teacher": "زدکړیال",
+      "price": 0,
+      "description": "د طب د بنسټیزو موضوعاتو مقدماتي کورس.",
+      "videos": [],
+      "studentsCount": 0
+    }
+  ],
+  "books": [],
+  "ads": [],
+  "notifications": [],
+  "purchases": [],
+  "wishlist": [],
+  "sessions": [
+    {
+      "token": "359944608af9305f3252f96c9b00035229e1db87d4f086809dbdd182364686ed",
+      "userId": "superadmin-1",
+      "deviceId": "5e929086-681d-4ef3-9086-08c88da273a6",
+      "createdAt": "2026-09-15T15:45:33.923Z"
+    }
+  ],
+  "auditLogs": [],
+  "wishlists": [],
+  "certificates": [],
+  "settings": {
+    "platformName": "زدکړیال",
+    "defaultLanguage": "ps",
+    "maintenance": false
+  },
+  "universities": [
+    "کابل پوهنتون",
+    "کابل طبي پوهنتون",
+    "هرات پوهنتون",
+    "ننګرهار پوهنتون",
+    "بلخ پوهنتون",
+    "کندهار پوهنتون",
+    "پوهنتون های خصوصی",
+    "نور"
+  ],
+  "faculties": [
+    "طب",
+    "ستوماتولوژي",
+    "فارمسي",
+    "نرسنګ",
+    "عامه روغتیا",
+    "انجنیري",
+    "کمپیوټر ساینس",
+    "اقتصاد",
+    "حقوق او سیاسي علوم",
+    "اداره او عامه پالیسي",
+    "ښوونه او روزنه",
+    "کرنه",
+    "وترنري علوم",
+    "ساینس",
+    "جیولوجي او کانونه",
+    "ژورنالیزم او رسنۍ",
+    "ژبې او ادبیات",
+    "شرعیات",
+    "ټولنیز علوم",
+    "چاپېریال او طبیعي سرچینې",
+    "هنرونه",
+    "بدني روزنه",
+    "کتابتون او معلوماتي علوم",
+    "مخابرات او معلوماتي ټکنالوژي",
+    "نور",
+    "niazmohammad",
+    "niazmohammad"
+  ],
+  "departments": [
+    {
+      "faculty": "طب",
+      "name": "عمومي طب"
+    },
+    {
+      "faculty": "ستوماتولوژي",
+      "name": "ستوماتولوژي"
+    },
+    {
+      "faculty": "فارمسي",
+      "name": "فارمسي"
+    },
+    {
+      "faculty": "نرسنګ",
+      "name": "نرسنګ"
+    },
+    {
+      "faculty": "کمپیوټر ساینس",
+      "name": "Computer Science"
+    },
+    {
+      "faculty": "کمپیوټر ساینس",
+      "name": "Software Engineering"
+    },
+    {
+      "faculty": "کمپیوټر ساینس",
+      "name": "Information Technology"
+    },
+    {
+      "faculty": "انجنیري",
+      "name": "سیول انجنیري"
+    },
+    {
+      "faculty": "انجنیري",
+      "name": "برېښنا انجنیري"
+    },
+    {
+      "faculty": "حقوق او سیاسي علوم",
+      "name": "حقوق"
+    }
+  ],
+  "academicYears": [
+    "1404",
+    "1405",
+    "1406"
+  ],
+  "semesters": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11"
+  ],
+  "facultySemesters": {
+    "طب": 11,
+    "ستوماتولوژي": 10,
+    "فارمسي": 10,
+    "نرسنګ": 8,
+    "عامه روغتیا": 8,
+    "انجنیري": 9,
+    "کمپیوټر ساینس": 8,
+    "اقتصاد": 8,
+    "حقوق او سیاسي علوم": 8,
+    "اداره او عامه پالیسي": 8,
+    "ښوونه او روزنه": 8,
+    "کرنه": 8,
+    "وترنري علوم": 10,
+    "ساینس": 8,
+    "جیولوجي او کانونه": 8,
+    "ژورنالیزم او رسنۍ": 8,
+    "ژبې او ادبیات": 8,
+    "شرعیات": 8,
+    "ټولنیز علوم": 8,
+    "چاپېریال او طبیعي سرچینې": 8,
+    "هنرونه": 8,
+    "بدني روزنه او سپورت": 8,
+    "کتابتون او معلوماتي علوم": 8,
+    "مخابرات او معلوماتي ټکنالوژي": 8,
+    "نور": 8
+  },
+  "subjects": [],
+  "orders": [],
+  "liveClasses": [],
+  "supportTickets": [],
+  "site": {
+    "heroImage": "",
+    "gallery": [],
+    "posts": []
+  },
+  "programs": [],
+  "transcriptRecords": [],
+  "attendance": [],
+  "gradingScales": [
+    {
+      "id": "afg-standard",
+      "name": "Afghanistan Standard",
+      "scale": [
+        {
+          "grade": "A",
+          "min": 90,
+          "max": 100,
+          "point": 4
+        },
+        {
+          "grade": "B",
+          "min": 80,
+          "max": 89.99,
+          "point": 3
+        },
+        {
+          "grade": "C",
+          "min": 70,
+          "max": 79.99,
+          "point": 2
+        },
+        {
+          "grade": "D",
+          "min": 60,
+          "max": 69.99,
+          "point": 1
+        },
+        {
+          "grade": "F",
+          "min": 0,
+          "max": 59.99,
+          "point": 0
+        }
+      ]
+    }
+  ],
+  "policies": [
+    {
+      "id": "academic-integrity",
+      "title": "Academic Integrity",
+      "summary": "د امتحان، تکلیف او علمي کار اصول رعایت کړئ."
+    },
+    {
+      "id": "privacy",
+      "title": "Privacy & Data Protection",
+      "summary": "د محصل شخصي معلومات باید د قانوني او تعلیمي اړتیا له مخې وکارول شي."
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "summary": "د زده‌کړې محتوا باید د امکان تر حده د لاسرسي معیارونه مراعات کړي."
+    }
+  ]
+}

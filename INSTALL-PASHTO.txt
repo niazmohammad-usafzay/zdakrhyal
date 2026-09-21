@@ -1,0 +1,10 @@
+د Bonto نصب:
+1) د ZIP ټول فایلونه Upload/Replace کړه؛ server.js هم حتماً Replace کړه.
+2) package.json وساته او Bonto ته اجازه ورکړه چې app د start script له مخې وچلوي.
+3) Node 18/20/22 LTS وکاروه.
+4) SMS لپاره Environment Variables: SMS_API_URL, SMS_API_TOKEN, SMS_FROM
+5) Browser کې Ctrl+Shift+R یا hard refresh وکړه.
+6) عامه Register کې یوازې Student ښکاري. Teacher د Super Admin Dashboard څخه جوړېږي.
+
+Database:
+دا V10 لا د demo data.json سره چلېږي. د حقیقي production Database لپاره supabase_schema.sql په Supabase Dashboard > SQL Editor کې Run کړه. وروسته server.js باید د Supabase/PostgreSQL سره وصل شي؛ یوازې SQL Run کول موجوده data.json app په اتومات ډول Supabase ته نه اړوي.
